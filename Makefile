@@ -5,6 +5,7 @@ RM = rm -rf
 OBJ_F = ./obj
 
 SRC = src/main.c src/get_next_line.c src/get_next_line_utils.c \
+		src/parse_colours.c \
 		src/free.c \
 		
 		

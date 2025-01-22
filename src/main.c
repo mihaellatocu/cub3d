@@ -11,19 +11,14 @@
 /* ************************************************************************** */
 
 #include "../cub3d.h"
-
-
-// int check_valid_map(char *map)
-// {
-	
-
-	
-// 	return 1;
-// }
 /*
--check extension DONE
--check path 
--check format
+-check extension file DONE
+TODO
+-check path for file 
+- check path for geographic textures
+- check if the RGB are only between 0-255 and not negatives and nothing else apart numbers like letters
+- need to exit on errors
+- save map
 -check walls
 
 */
@@ -40,6 +35,7 @@ void init_textures_variables(t_map *file)
 	file->south = NULL;
 	file->west = NULL;
 	file->east = NULL;
+	//file->color_value = 0; //?? trebuie sa il initiez?
 }
 
 void validate_args(int argc, char **argv)
@@ -57,20 +53,23 @@ void validate_args(int argc, char **argv)
 		printf("Multiple arguments provided.\n");
 		exit(1);
 	}
-	len = ft_strlen(argv[1]);
-	if (!ft_strnstr(argv[1] + len - 4, ".cub", len))	
-	{
-		printf("The map should be in '.cub' format\n");
-		exit(EXIT_FAILURE);
-	}
-	fd = open(argv[1], O_RDONLY);
+	fd = open(argv[1], O_RDONLY); // which one should be first?
 	if (fd == -1)
 	{
 		printf("File does not exist or cannot be accessed.\n");
 		exit(1);
 	}
 	close(fd);
+	len = ft_strlen(argv[1]);
+	if (!ft_strnstr(argv[1] + len - 4, ".cub", len))	
+	{
+		printf("The map should be in '.cub' format\n"); // or this one?
+		exit(EXIT_FAILURE);
+	}
+	
 }
+
+
 
 void read_line(char* line, t_map *file)
 {
@@ -90,7 +89,11 @@ void read_line(char* line, t_map *file)
 	{
 		file->east = ft_strtrim(line + 2, " ");  
 	}
-	
+	else if ((ft_strncmp(line, "F", 1) == 0) || (ft_strncmp(line, "C", 1) == 0))
+	{
+		pick_color(line, file);
+	}
+
 	
 }
 
@@ -105,7 +108,7 @@ void	read_file(char *argv, t_map *file)
 	while (line)
 	{
 		printf("%s\n", line);
-		read_line(line, file); //save path to textures and colurs for floor and ceiling
+		read_line(line, file); //save path to textures and colours for floor and ceiling
 								//check if the paths to textures are valid
 
 		
@@ -123,7 +126,6 @@ int	main(int argc, char *argv[])
 	validate_args(argc, argv);
 	init_textures_variables(&file);
 	read_file(argv[1], &file);
-
 
 	free_variables(&file);
 	printf("**********end of main function\n");
