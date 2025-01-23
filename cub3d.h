@@ -35,7 +35,7 @@ typedef struct s_map
 	char* 	west;
 	char*	east;
 
-	int	color_value[3];
+	int		floor[3];
 	int		f_red; // Floor Red
 	int 	f_green;
 	int 	f_blue;
@@ -44,6 +44,7 @@ typedef struct s_map
 	int 	c_blue;
 
 	char**	map;
+	bool 	error;
 } 			t_map;
 
 
@@ -55,6 +56,10 @@ void	read_line(char* line, t_map *file); // reading each line of the file and sa
 
 //void pick_color(char *line, char* trimmed_lines, t_map *file);
 void pick_color(char *line, t_map *file);
+int valid_colours(char *line, t_map *file);
+void ft_clean(char *line, t_map *file);
+
+
 void free_variables(t_map *file);
 
 #endif

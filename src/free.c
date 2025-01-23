@@ -10,5 +10,6 @@ void free_variables(t_map *file)
 	free(file->west);
 	printf(" file east %s\n", file->east);
 	free(file->east);
+	
 
 }

@@ -14,7 +14,7 @@
 /*
 -check extension file DONE
 TODO
--check path for file 
+-check path for file -no
 - check path for geographic textures
 - check if the RGB are only between 0-255 and not negatives and nothing else apart numbers like letters
 - need to exit on errors
@@ -35,7 +35,8 @@ void init_textures_variables(t_map *file)
 	file->south = NULL;
 	file->west = NULL;
 	file->east = NULL;
-	//file->color_value = 0; //?? trebuie sa il initiez?
+	file->error = false;
+	
 }
 
 void validate_args(int argc, char **argv)
@@ -91,8 +92,11 @@ void read_line(char* line, t_map *file)
 	}
 	else if ((ft_strncmp(line, "F", 1) == 0) || (ft_strncmp(line, "C", 1) == 0))
 	{
-		pick_color(line, file);
+		if (valid_colours(line, file) == 1)
+			pick_color(line, file);
 	}
+	if (file->error == true)
+		ft_clean(line, file);
 
 	
 }
@@ -111,9 +115,10 @@ void	read_file(char *argv, t_map *file)
 		read_line(line, file); //save path to textures and colours for floor and ceiling
 								//check if the paths to textures are valid
 
-		
+	
 		free(line);
-		line = get_next_line(fd);
+		if (!file->error)
+			line = get_next_line(fd);
 	}
 	close(fd);
 }
