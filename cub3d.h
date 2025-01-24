@@ -36,30 +36,47 @@ typedef struct s_map
 	char*	east;
 
 	int		floor[3];
-	int		f_red; // Floor Red
-	int 	f_green;
-	int 	f_blue;
-	int		c_red; // Ceiling red
-	int 	c_green;
-	int 	c_blue;
+	int		ceiling[3];
+	// int		f_red; // Floor Red
+	// int 	f_green;
+	// int 	f_blue;
+	// int		c_red; // Ceiling red
+	// int 	c_green;
+	// int 	c_blue;
+	char* floor_str;
+	char* ceiling_str;
 
 	char**	map;
+	char** temp_map;
+	int		nr_rows_map;
 	bool 	error;
 } 			t_map;
 
 
 // Parsing 
 
-void	validate_args(int argc, char **argv);
+int	validate_args(int argc, char **argv);
 void	init_textures_variables(t_map *file);
 void	read_line(char* line, t_map *file); // reading each line of the file and save the 
 
 //void pick_color(char *line, char* trimmed_lines, t_map *file);
 void pick_color(char *line, t_map *file);
 int valid_colours(char *line, t_map *file);
-void ft_clean(char *line, t_map *file);
+void	check_texture_paths(t_map *file,  char* path);
+
+void ft_clean(t_map *file, char* str);
+
+//           MAP
+void	create_map(char* line, t_map *file);
+int		valid_elements(char* line);
+void	print_map(t_map *file);
+int		check_map(t_map *file);
+
+void	free_variables(t_map *file);
+void	free_matrix(t_map *file);
+void	free_temp_matrix(t_map *file);
 
 
-void free_variables(t_map *file);
+
 
 #endif

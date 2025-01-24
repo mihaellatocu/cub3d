@@ -16,12 +16,11 @@ void	check_value(int value, char first_letter, int k, t_map *file)
 		}
 		else if (first_letter == 'C')
 		{
-			file->floor[k] = value;
+			file->ceiling[k] = value;
 		}
 	}
-	
-	// printf(" F red green blue %d %d %d\n", file->f_red, file->f_green, file->f_blue);
-	// printf(" C red green blue %d %d %d\n", file->c_red, file->c_green, file->c_blue);
+	// printf(" F red green blue %d %d %d\n", file->floor[0], file->floor[1], file->floor[2]);
+	// printf(" C red green blue %d %d %d\n", file->ceiling[0], file->ceiling[1], file->ceiling[2]);
 }
 
 void pick_color(char *line, t_map *file)
@@ -29,7 +28,7 @@ void pick_color(char *line, t_map *file)
 	int i;
 	char temp_nr[4];
 	int j;
-	int k;
+	int k; // nr of colours
 	int value;
 
 	i = 1;
@@ -48,39 +47,38 @@ void pick_color(char *line, t_map *file)
 		k++;
 		j = 0;
 	}
-	printf("%d\n", file->error);
+	if (k != 3)
+		ft_clean(file, "Error:\nColur missconfiguration.\n");
 }
 
 int valid_colours(char *line, t_map *file)
 {
 	int i;
-	(void)file;
 
 	i = 1;
-	printf("valid_colours function\n");
-	
+	if (line == NULL)
+		return(0); 
+	//printf("valid_colours function\n");
 	while(line[i])
 	{
 		if ((line[i] != ' ' && line[i] != ',' && line[i] <'0') || (line[i] > '9'))
-		{
-			printf("i este %d si line[i] %c The RGB values are incorrect!\n", i, line[i]);
-			file->error = true;
-			return 0;
-		}	
+			ft_clean(file,"Error:\nThe coulour configuration is incorrect.\n");	
 		i++;
 	}
-	//printf("%d\n", file->error);
 	return (1);
 }
 
-void ft_clean(char *line, t_map *file)
+void ft_clean(t_map *file, char* str)
 {
-	if (file->error == true)
-	{
+	// if (file->error == true)
+	// {
 		free_variables(file);
-		if(line)
-			free(line);
-		printf("ft_clean called\n");
-		exit(1);
-	}
+		// if()
+		// 	free(line);
+		printf(  "ft_clean called %s\n" , str);
+		
+	//}
+	exit(1);
 }
+
+

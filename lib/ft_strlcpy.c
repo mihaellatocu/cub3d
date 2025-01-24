@@ -32,6 +32,20 @@ size_t	ft_strlcpy(char *dst, char *src, int dest_size)
 	}
 	return (source_size);
 }
+
+void	ft_strcpy(char *dst, char *src)
+{
+	int	i;
+
+	i = 0;
+	while (src[i] != '\0')
+	{
+		dst[i] = src[i];
+		i++;
+	}
+	dst[i] = '\0';
+}
+
 /*
 int	main(void)
 {

@@ -77,4 +77,6 @@ int		ft_isspace(char c);
 void	ft_free_char2(char **tofree);
 void	ft_free_char3(char ***tofree);
 
+void	ft_strcpy(char *dst, char *src);
+
 #endif
