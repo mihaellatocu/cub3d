@@ -37,12 +37,7 @@ typedef struct s_map
 
 	int		floor[3];
 	int		ceiling[3];
-	// int		f_red; // Floor Red
-	// int 	f_green;
-	// int 	f_blue;
-	// int		c_red; // Ceiling red
-	// int 	c_green;
-	// int 	c_blue;
+
 	char* floor_str;
 	char* ceiling_str;
 
@@ -50,6 +45,10 @@ typedef struct s_map
 	char** temp_map;
 	int		nr_rows_map;
 	bool 	error;
+
+	int		poz_x;
+	int		poz_y;
+	int		nr_cardinals;
 } 			t_map;
 
 

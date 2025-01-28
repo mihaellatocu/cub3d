@@ -40,6 +40,10 @@ void	init_textures_variables(t_map *file)
 	file->map = NULL;
 	file->ceiling_str = NULL;
 	file->floor_str = NULL;
+
+	file->poz_x = 0;
+	file->poz_y = 0;
+	file->nr_cardinals = 0;
 	
 }
 
