@@ -49,16 +49,16 @@ int	validate_args(int argc, char **argv)
 	int	fd;
 	
 	if (argc < 2)
-		return (printf(RED "The Map was not provided.\n" RST), 1);
+		return (printf(RED "Error:\nThe Map was not provided.\n" RST), 1);
 	else if (argc != 2)
-		return (printf(RED "Multiple arguments provided.\n" RST), 1);
+		return (printf(RED "Error\nMultiple arguments provided.\n" RST), 1);
 	fd = open(argv[1], O_RDONLY); // which one should be first?
 	if (fd == -1)
-		return (printf(RED "File does not exist or cannot be accessed.\n" RST), 1);
+		return (printf(RED "Error:\nFile does not exist or cannot be accessed.\n" RST), 1);
 	close(fd);
 	len = ft_strlen(argv[1]);
 	if (!ft_strnstr(argv[1] + len - 4, ".cub", len))	
-		return (printf(RED "The map should be in '.cub' format\n"RST), 1); // or this one?
+		return (printf(RED "Error:\nThe map should be in '.cub' format\n"RST), 1); // or this one?
 	return (0);
 }
 
@@ -100,8 +100,8 @@ void	check_parsing(t_map *file)
 	 	pick_color(file->ceiling_str, file);
 	if (valid_colours(file->floor_str, file) == 1)
 	 	pick_color(file->floor_str, file);
-	//check_map();
-	if (file->error == true) // to be removed is not needed
+	check_map(file);
+	if (file->error == true) // to be removed if not needed
 		ft_clean(file, "Error:\n");
 }
 

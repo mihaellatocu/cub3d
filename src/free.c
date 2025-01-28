@@ -2,7 +2,7 @@
 
 void free_variables(t_map *file)
 {
-	printf(" file north %s\n", file->north);
+	//printf(" file north %s\n", file->north);
 	free(file->north);
 	//printf(" file south %s\n", file->south);
 	free(file->south);
