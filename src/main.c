@@ -18,8 +18,8 @@ TODO
 - check path for geographic textures ??
 -DONE  check if the RGB are only between 0-255 and not negatives and nothing else apart numbers like letters
 - need to exit on errors
-- save map
--check walls
+- save map DONE
+-check walls DONE
 
 */
 
@@ -30,11 +30,10 @@ void	init_textures_variables(t_map *file)
 	file->south = NULL;
 	file->west = NULL;
 	file->east = NULL;
-	file->error = false;
+	file->error = false; // to check if can be removed
 	file->ceiling[0]= -1;
 	file->ceiling[1]= -1;
 	file->ceiling[2]= -1;
-	//file->floor
 
 	file->temp_map = NULL;
 	file->map = NULL;
