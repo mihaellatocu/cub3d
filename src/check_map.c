@@ -22,6 +22,34 @@ int	check_cardinal(char c)
 	return (0);
 }
 
+int	check_spaces(t_map *file, int len_line, int i)
+{
+	int	j;
+
+	j = 0;
+	while (j < len_line && i > 0 && i < file->nr_rows_map - 2)
+	{
+		if (file->map[i][j] == '0' && file->map[i - 1][j] == ' ')
+			return (0);
+		if (file->map[i][j] == '0' && j > 0 && file->map[i - 1][j - 1] == ' ')
+			return (0);
+		if (file->map[i][j] == '0' && file->map[i - 1][j + 1] == ' ')
+			return (0);
+		if (file->map[i][j] == '0' && j > 0 && file->map[i][j - 1] == ' ')
+			return (0);
+		if (file->map[i][j] == '0' && file->map[i][j + 1] == ' ')
+			return (0);
+		if (file->map[i][j] == '0' && file->map[i + 1][j] == ' ')
+			return (0);
+		if (file->map[i][j] == '0' && j > 0 && file->map[i + 1][j - 1] == ' ')
+			return (0);
+		if (file->map[i][j] == '0' && file->map[i + 1][j + 1] == ' ')
+			return (0);
+		j++;
+	}
+	return (1);
+}
+
 void	check_cardinal_points(t_map *file, int len_line, int i)
 {
 	int	j;
@@ -187,6 +215,8 @@ int	check_map(t_map *file)
 			check_north_wall(file, len_line);
 		check_left_wall(file, file->map[i], i, len_line);
 		check_right_wall(file, file->map[i], len_line - 1, i);
+		if (check_spaces(file, len_line - 1, i) == 0)
+			printf(RED "Ceva nu e corect\n" RST);
 		i++;
 	}
 	len_line = ft_strlen(file->map[file->nr_rows_map -1]);

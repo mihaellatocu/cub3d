@@ -34,6 +34,9 @@ void	init_textures_variables(t_map *file)
 	file->ceiling[0]= -1;
 	file->ceiling[1]= -1;
 	file->ceiling[2]= -1;
+	file->floor[0]= -1;
+	file->floor[1]= -1;
+	file->floor[2]= -1;
 
 	file->temp_map = NULL;
 	file->map = NULL;

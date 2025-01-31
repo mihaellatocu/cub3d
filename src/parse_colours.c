@@ -5,19 +5,14 @@ void	check_value(int value, char first_letter, int k, t_map *file)
 	if (k >= 3 || value < 0 || value > 255)
 	{
 		printf("Eroare la nr de culori sau marimea lor\n");
-		printf("value %d\n", value);
 		file->error = true;
 	}	
 	else if (value >= 0 && value <= 255)
 	{
 		if (first_letter == 'F')
-		{
 			file->floor[k] = value;
-		}
 		else if (first_letter == 'C')
-		{
 			file->ceiling[k] = value;
-		}
 	}
 	// printf(" F red green blue %d %d %d\n", file->floor[0], file->floor[1], file->floor[2]);
 	// printf(" C red green blue %d %d %d\n", file->ceiling[0], file->ceiling[1], file->ceiling[2]);
@@ -75,7 +70,7 @@ void ft_clean(t_map *file, char* str)
 		free_variables(file);
 		// if()
 		// 	free(line);
-		printf(  "ft_clean called %s\n" , str);
+		printf("ft_clean called %s\n" , str);
 		
 	//}
 	exit(1);
