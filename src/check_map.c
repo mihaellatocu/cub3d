@@ -30,7 +30,7 @@ int	check_spaces(t_map *file, int len_line, int i)
 	while (j < len_line && i > 0 && i < file->nr_rows_map - 2)
 	{
 		if (file->map[i][j] == '0' && file->map[i - 1][j] == ' ')
-			return (0);
+			return (0); //ft_clean(file, "Error:\n Spaces inside the map.")
 		if (file->map[i][j] == '0' && j > 0 && file->map[i - 1][j - 1] == ' ')
 			return (0);
 		if (file->map[i][j] == '0' && file->map[i - 1][j + 1] == ' ')
@@ -65,6 +65,8 @@ void	check_cardinal_points(t_map *file, int len_line, int i)
 		}
 		j++;
 	}
+	if (file->nr_cardinals > 1)
+		ft_clean(file, RED "Error:\nThe number of cardinal points is incorrect." RST);
 }
 
 void	check_left_wall(t_map *file, char *row, int i, int len_line)
@@ -216,12 +218,10 @@ int	check_map(t_map *file)
 		check_left_wall(file, file->map[i], i, len_line);
 		check_right_wall(file, file->map[i], len_line - 1, i);
 		if (check_spaces(file, len_line - 1, i) == 0)
-			printf(RED "Ceva nu e corect\n" RST);
+			printf(RED "Ceva nu e corect\n" RST); // fara if
 		i++;
 	}
 	len_line = ft_strlen(file->map[file->nr_rows_map -1]);
 	check_south_wall(file, len_line);
-	if (file->nr_cardinals != 1)
-		ft_clean(file, RED "Error:\nNumber of cardinals are incorrect.\n" RST);
 	return (0);
 }

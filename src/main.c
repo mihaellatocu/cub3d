@@ -145,10 +145,12 @@ int	main(int argc, char *argv[])
 	read_file(argv[1], &file);
 	
 	check_parsing(&file);
-
+	//execution(&file);
 
 	print_map(&file);
 	free_variables(&file);
 	printf("**********end of main function\n");
 	return (0);
 }
+
+// de verificat daca am toate variabilele 
