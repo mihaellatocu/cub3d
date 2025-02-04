@@ -3,15 +3,12 @@
 /*                                                        :::      ::::::::   */
 /*   check_map.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mtocu <marvin@.fr>                         #+#  +:+       +#+        */
+/*   By: mtocu <mtocu@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025-01-30 19:29:44 by mtocu             #+#    #+#             */
-/*   Updated: 2025-01-30 19:29:44 by mtocu            ###   ########.fr       */
+/*   Created: 2025/01/30 19:29:44 by mtocu             #+#    #+#             */
+/*   Updated: 2025/02/04 16:33:40 by mtocu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-// ce fac daca am spatii in interior?
-//len line poate fi trimis in main
 
 #include "../cub3d.h"
 
@@ -22,29 +19,55 @@ int	check_cardinal(char c)
 	return (0);
 }
 
-int	check_spaces(t_map *file, int len_line, int i)
-{
-	int	j;
+// int	check_spaces(t_map *file, int len_line, int i, int j)
+// {
+// 	while (j < len_line && i > 0 && i < file->nr_rows_map - 1)
+// 	{
+// 		if (file->map[i][j] == '0')
+// 		{
+// 			if (file->map[i - 1][j] == ' ' || file->map[i - 1][j] == '\0')
+// 				return (0);
+// 			if (j > 0 && (file->map[i - 1][j - 1] == ' ' 
+// 				|| file->map[i - 1][j - 1] == '\0'))
+// 				return (0);
+// 			if (file->map[i - 1][j + 1] == ' ' || file->map[i - 1][j + 1] == '\0')
+// 				return (0);
+// 			if (file->map[i][j] == '0' && j > 0 && file->map[i][j - 1] == ' ')
+// 				return (0);
+// 			if (file->map[i][j] == '0' && file->map[i][j + 1] == ' ')
+// 				return (0);
+// 			if (file->map[i + 1][j] == ' ' || file->map[i + 1][j] == '\0')
+// 				return (0);
+// 			if (j > 0 && (file->map[i + 1][j - 1] == ' ' || file->map[i + 1][j -1] == '\0'))
+// 				return (0);
+// 			if (file->map[i + 1][j + 1] == ' ' || file->map[i + 1][j + 1] == '\0')
+// 				return (0);
+// 		}
+// 		j++;
+// 	}
+// 	return (1);
+// }
 
-	j = 0;
-	while (j < len_line && i > 0 && i < file->nr_rows_map - 2)
+int	check_spaces(t_map *file, int len_line, int i, int j)
+{
+	while (j < len_line && i > 0 && i < file->nr_rows_map - 1)
 	{
-		if (file->map[i][j] == '0' && file->map[i - 1][j] == ' ')
-			return (0); //ft_clean(file, "Error:\n Spaces inside the map.")
-		if (file->map[i][j] == '0' && j > 0 && file->map[i - 1][j - 1] == ' ')
-			return (0);
-		if (file->map[i][j] == '0' && file->map[i - 1][j + 1] == ' ')
-			return (0);
-		if (file->map[i][j] == '0' && j > 0 && file->map[i][j - 1] == ' ')
-			return (0);
-		if (file->map[i][j] == '0' && file->map[i][j + 1] == ' ')
-			return (0);
-		if (file->map[i][j] == '0' && file->map[i + 1][j] == ' ')
-			return (0);
-		if (file->map[i][j] == '0' && j > 0 && file->map[i + 1][j - 1] == ' ')
-			return (0);
-		if (file->map[i][j] == '0' && file->map[i + 1][j + 1] == ' ')
-			return (0);
+		if (file->map[i][j] == '0' || check_cardinal(file->map[i][j]))
+		{
+			if ((file->map[i - 1][j] == ' ' || file->map[i - 1][j] == '\0')
+			|| (j > 0 && (file->map[i - 1][j - 1] == ' '
+			|| file->map[i - 1][j - 1] == '\0'))
+			|| (file->map[i - 1][j + 1] == ' '
+			|| file->map[i - 1][j + 1] == '\0')
+			|| (j > 0 && file->map[i][j - 1] == ' ')
+			|| (file->map[i][j + 1] == ' ')
+			|| (file->map[i + 1][j] == ' ' || file->map[i + 1][j] == '\0')
+			|| (j > 0 && (file->map[i + 1][j - 1] == ' '
+			|| file->map[i + 1][j -1] == '\0'))
+			|| (file->map[i + 1][j + 1] == ' '
+			|| file->map[i + 1][j + 1] == '\0'))
+				return (0);
+		}
 		j++;
 	}
 	return (1);
@@ -65,11 +88,9 @@ void	check_cardinal_points(t_map *file, int len_line, int i)
 		}
 		j++;
 	}
-	if (file->nr_cardinals > 1)
-		ft_clean(file, RED "Error:\nThe number of cardinal points is incorrect." RST);
 }
 
-void	check_left_wall(t_map *file, char *row, int i, int len_line)
+void	check_left_wall(t_map *file, char *row, int len_line)
 {
 	int	j;
 
@@ -83,14 +104,7 @@ void	check_left_wall(t_map *file, char *row, int i, int len_line)
 			while (j < len_line)
 			{
 				while (row[j + 1] == ' ')
-				{
 					j++;
-					if (i > 1 && i < file->nr_rows_map - 1 && j > 0 && j
-						< len_line - 1 && ((file->map[i - 1][j] != '1' \
-						&& file->map[i - 1][j] != ' ') || (file->map[i + 1][j]
-						!= '1' && file->map[i + 1][j] != ' ')))
-						ft_clean(file, RED"Error:\nLeft wall is invalid.\n"RST);
-				}
 				if (row[j + 1] == '1')
 					return ;
 				else
@@ -138,15 +152,7 @@ void	check_north_wall(t_map *file, int len_line)
 		else if (file->map[i][j] == ' ')
 		{
 			while (file->map[i + 1][j] == ' ')
-			{
 				i++;
-				if (j > 0 && (file->map[i - 1][j - 1] != ' ' \
-					&& file->map[i][j - 1] != '1'))
-					ft_clean(file, RED "Error:\nThe top row is incorrect." RST);
-				if (j + 1 < len_line && file->map[i - 1][j + 1] != ' ' \
-					&& file->map[i][j + 1] != '1')
-					ft_clean(file, RED "Error:\nThe top row is incorrect." RST);
-			}
 			if (file->map[i + 1][j] != '1')
 				ft_clean(file, RED "Error:\nThe top row is incorrect." RST);
 		}
@@ -171,13 +177,7 @@ void	check_south_wall(t_map *file, int len_line)
 		{
 			k = i;
 			while (k > 0 && file->map[k][j] == ' ')
-			{
 				k--;
-				if (j > 0 && j + 1 < len_line && file->map[k][j] == ' ' \
-				&& ((file->map[k][j - 1] != '1' && file->map[k][j - 1] != ' ') \
-				|| (file->map[k][j + 1] != '1' && file->map[k][j + 1] != ' ')))
-					ft_clean(file, RED "Error:\nSouth wall not valid.\n" RST);
-			}
 			if (file->map[k][j] != '1' || k == 0)
 				ft_clean(file, RED "Error:\nSouth wall is incorrect.\n" RST);
 		}
@@ -190,14 +190,43 @@ void	remove_spaces_map(char *row)
 	int	j;
 
 	j = ft_strlen(row) - 1;
-	while (j > 1 && row[j] == ' ')
+	while (j >= 0 && row[j] == ' ')
 	{
 		row[j] = '\0';
 		j--;
 	}
 }
 
-int	check_map(t_map *file)
+void	ck_if_have_variables(t_map *file)
+{
+	if (file->nr_cardinals != 1)
+		ft_clean(file, "Error:\nThe number of cardinal points is incorrect.");
+	if (file->ceiling[0] == -1 || file->ceiling[1] == -1
+		|| file->ceiling[2] == -1 || file->floor[0] == -1
+		|| file->floor[1] == -1 || file->floor[2] == -1)
+		ft_clean(file, RED "Error:\nThe RGB is not valid." RST);
+	if (file->north == NULL || file->south == NULL || file->west == NULL
+		|| file->east == NULL)
+		ft_clean(file, RED "Error:\nThe textures are missing." RST);
+}
+
+void	ck_empty_lines(t_map *file)
+{
+	int		i;
+	int		len_line;
+
+	i = 0;
+	while (i < file->nr_rows_map)
+	{
+		remove_spaces_map(file->map[i]);
+		len_line = ft_strlen(file->map[i]);
+		if (len_line == 0)
+			ft_clean(file, RED "Error:\nThe line is empty.*" RST);
+		i++;
+	}
+}
+
+void	check_map(t_map *file)
 {
 	int	i;
 	int	len_line;
@@ -205,23 +234,20 @@ int	check_map(t_map *file)
 	i = 0;
 	if (file->nr_rows_map < 2)
 		ft_clean(file, RED "Error:\nThe map is incorrect.\n" RST);
+	ck_empty_lines(file);
 	while (i < file->nr_rows_map)
 	{
-		remove_spaces_map(file->map[i]);
 		len_line = ft_strlen(file->map[i]);
-		printf("line is %d - and lenght line: %d\n", i, len_line);
-		if (ft_strlen(file->map[i]) == 0)
-			ft_clean(file, RED "Error:\nThe line is empty.\n" RST);
+		printf("line is %d - and lenght line: %d\n", i, len_line); //can be removed
 		check_cardinal_points(file, len_line, i);
 		if (i == 0)
 			check_north_wall(file, len_line);
-		check_left_wall(file, file->map[i], i, len_line);
+		check_left_wall(file, file->map[i], len_line);
 		check_right_wall(file, file->map[i], len_line - 1, i);
-		if (check_spaces(file, len_line - 1, i) == 0)
-			printf(RED "Ceva nu e corect\n" RST); // fara if
+		if (check_spaces(file, len_line, i, 0) == 0)
+			ft_clean(file, RED "Error\nThe walls are inconsistent.\n" RST);
 		i++;
 	}
-	len_line = ft_strlen(file->map[file->nr_rows_map -1]);
 	check_south_wall(file, len_line);
-	return (0);
+	ck_if_have_variables(file);
 }

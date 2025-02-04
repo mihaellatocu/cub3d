@@ -1,17 +1,24 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   free.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mtocu <mtocu@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/04 14:29:45 by mtocu             #+#    #+#             */
+/*   Updated: 2025/02/04 14:29:53 by mtocu            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../cub3d.h"
 
-void free_variables(t_map *file)
+void	free_variables(t_map *file)
 {
-	//printf(" file north %s\n", file->north);
 	free(file->north);
-	//printf(" file south %s\n", file->south);
 	free(file->south);
-	//printf(" file west %s\n", file->west);
 	free(file->west);
-	//printf(" file east %s\n", file->east);
 	free(file->east);
 	free(file->ceiling_str);
 	free(file->floor_str);
-
 	free_matrix(file);
 }

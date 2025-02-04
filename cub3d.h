@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3d.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mtocu <marvin@.fr>                         #+#  +:+       +#+        */
+/*   By: mtocu <mtocu@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025-01-31 17:23:26 by mtocu             #+#    #+#             */
-/*   Updated: 2025-01-31 17:23:26 by mtocu            ###   ########.fr       */
+/*   Created: 2025/01/31 17:23:26 by mtocu             #+#    #+#             */
+/*   Updated: 2025/02/04 16:18:47 by mtocu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,11 +80,11 @@ void	check_texture_paths(t_map *file,  char *path);
 void	create_map(char *line, t_map *file);
 int		valid_elements(char *line);
 void	print_map(t_map *file);
-int		check_map(t_map *file);
+void	check_map(t_map *file);
 int		check_cardinal(char c);
 void	check_cardinal_points(t_map *file, int len_line, int i);
-int		check_spaces(t_map *file, int len_line, int i);
-void	check_left_wall(t_map *file, char *row, int i, int len_line);
+int		check_spaces(t_map *file, int len_line, int i, int j);
+void	check_left_wall(t_map *file, char *row, int len_line);
 void	check_right_wall(t_map *file, char *row, int len_line, int i);
 void	check_north_wall(t_map *file, int len_line);
 void	check_south_wall(t_map *file, int len_line);
