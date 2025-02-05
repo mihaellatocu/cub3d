@@ -1,28 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   check_texture.c                                    :+:      :+:    :+:   */
+/*   free.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mtocu <mtocu@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/04 13:58:05 by mtocu             #+#    #+#             */
-/*   Updated: 2025/02/04 14:11:46 by mtocu            ###   ########.fr       */
+/*   Created: 2025/02/04 14:29:45 by mtocu             #+#    #+#             */
+/*   Updated: 2025/02/05 11:33:08 by mtocu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../cub3d.h"
+#include "../../cub3d.h"
 
-void	check_texture_paths(t_map *file, char *paths)
+void	free_variables(t_map *file)
 {
-	int		fd;
-	int		bytes;
-	char	buffer[4];
-
-	fd = open(paths, O_RDONLY);
-	if (fd == -1)
-		ft_clean(file, "Error:\nThe texture file cannot be open.");
-	bytes = read(fd, buffer, sizeof(buffer));
-	close(fd);
-	if (bytes == -1)
-		ft_clean(file, "Error:\nThe texture file cannot be read.");
+	free(file->north);
+	free(file->south);
+	free(file->west);
+	free(file->east);
+	free(file->ceiling_str);
+	free(file->floor_str);
+	free_matrix(file);
 }

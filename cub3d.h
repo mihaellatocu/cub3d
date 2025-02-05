@@ -6,7 +6,7 @@
 /*   By: mtocu <mtocu@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/31 17:23:26 by mtocu             #+#    #+#             */
-/*   Updated: 2025/02/04 16:18:47 by mtocu            ###   ########.fr       */
+/*   Updated: 2025/02/04 16:40:13 by mtocu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@
 
 typedef struct s_map
 {
-	char	*north;// save path next to NO
+	char	*north;
 	char	*south;
 	char	*west;
 	char	*east;
@@ -90,14 +90,11 @@ void	check_north_wall(t_map *file, int len_line);
 void	check_south_wall(t_map *file, int len_line);
 void	remove_spaces_map(char *row);
 
-
 //			FREE
 void	free_variables(t_map *file);
 void	free_matrix(t_map *file);
 void	free_temp_matrix(t_map *file);
 void	ft_clean(t_map *file, char *str);
-
-
 
 
 #endif

@@ -6,11 +6,11 @@
 /*   By: mtocu <mtocu@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/20 15:04:46 by mtocu             #+#    #+#             */
-/*   Updated: 2025/02/04 16:34:30 by mtocu            ###   ########.fr       */
+/*   Updated: 2025/02/05 11:33:40 by mtocu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../cub3d.h"
+#include "../../cub3d.h"
 /*
 -check extension file DONE
 TODO

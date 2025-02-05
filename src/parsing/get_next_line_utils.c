@@ -6,12 +6,12 @@
 /*   By: mtocu <mtocu@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/18 18:52:09 by mtocu             #+#    #+#             */
-/*   Updated: 2025/01/21 13:19:05 by mtocu            ###   ########.fr       */
+/*   Updated: 2025/02/05 11:33:15 by mtocu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <unistd.h>
-#include "../get_next_line.h"
+#include "../../get_next_line.h"
 #include <stdint.h>
 
 void	*ft_calloc(size_t count, size_t size)

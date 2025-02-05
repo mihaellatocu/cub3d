@@ -6,11 +6,11 @@
 /*   By: mtocu <mtocu@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/04 14:12:47 by mtocu             #+#    #+#             */
-/*   Updated: 2025/02/04 15:11:26 by mtocu            ###   ########.fr       */
+/*   Updated: 2025/02/05 11:33:44 by mtocu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../cub3d.h"
+#include "../../cub3d.h"
 
 void	check_value(int value, char first_letter, int k, t_map *file)
 {

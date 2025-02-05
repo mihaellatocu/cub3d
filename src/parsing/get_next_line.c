@@ -6,12 +6,12 @@
 /*   By: mtocu <mtocu@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 14:27:47 by mtocu             #+#    #+#             */
-/*   Updated: 2025/01/21 13:19:00 by mtocu            ###   ########.fr       */
+/*   Updated: 2025/02/05 11:33:36 by mtocu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <unistd.h>
-#include "../get_next_line.h"
+#include "../../get_next_line.h"
 #include <string.h>
 #include <stdlib.h>
 
