@@ -8,6 +8,7 @@ SRC = src/parsing/main.c src/parsing/get_next_line.c src/parsing/get_next_line_u
 		src/parsing/parse_colours.c src/parsing/create_map.c src/parsing/check_map.c\
 		src/parsing/check_texture.c \
 		src/parsing/free.c \
+		src/exec/execution.c \
 		
 		
 

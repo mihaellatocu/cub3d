@@ -6,7 +6,7 @@
 /*   By: mtocu <mtocu@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/20 15:04:46 by mtocu             #+#    #+#             */
-/*   Updated: 2025/02/05 11:33:40 by mtocu            ###   ########.fr       */
+/*   Updated: 2025/02/05 13:33:02 by mtocu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,8 @@ void	init_textures_variables(t_map *file)
 	file->poz_x = -1;
 	file->poz_y = -1;
 	file->nr_cardinals = 0;
+	file->mlx = NULL;
+	file->win = NULL;
 }
 
 int	validate_args(int argc, char **argv)
@@ -126,6 +128,17 @@ void	read_file(char *argv, t_map *file)
 	close(fd);
 }
 
+// int	close_window(t_map *file)
+// {
+// 	mlx_destroy_window(file->mlx, file->win);
+// 	mlx_destroy_display(file->mlx);
+
+// 	free(file->mlx);
+// 	free_variables(file);
+// 	exit(0);
+// 	// return (0);
+// }
+
 int	main(int argc, char *argv[])
 {
 	t_map	file;
@@ -134,12 +147,20 @@ int	main(int argc, char *argv[])
 		exit(1);
 	init_textures_variables(&file);
 	read_file(argv[1], &file);
-	//print_map(&file);
 	check_parsing(&file);
-	//execution(&file);
+	// file.mlx = mlx_init();
+	// if(file.mlx == NULL)
+	// 	return 1; // do I need to return -1?
 
-	print_map(&file);
-	free_variables(&file);
+	// file.win = mlx_new_window(file.mlx, 800, 600, "Cub3d");
+	// if (file.win == NULL)
+	// 	return (free(file.mlx), 1);
+	// mlx_hook(file.win, 17, 1L << 0, close_window, &file);
+	// mlx_loop(file.mlx);
+	execution(&file);
+
+	// print_map(&file);
+	// free_variables(&file);
 	printf("**********end of main function\n");
 	return (0);
 }

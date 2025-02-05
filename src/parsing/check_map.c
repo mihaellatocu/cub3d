@@ -6,7 +6,7 @@
 /*   By: mtocu <mtocu@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/30 19:29:44 by mtocu             #+#    #+#             */
-/*   Updated: 2025/02/05 11:31:51 by mtocu            ###   ########.fr       */
+/*   Updated: 2025/02/05 11:39:14 by mtocu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,35 +18,6 @@ int	check_cardinal(char c)
 		return (1);
 	return (0);
 }
-
-// int	check_spaces(t_map *file, int len_line, int i, int j)
-// {
-// 	while (j < len_line && i > 0 && i < file->nr_rows_map - 1)
-// 	{
-// 		if (file->map[i][j] == '0')
-// 		{
-// 			if (file->map[i - 1][j] == ' ' || file->map[i - 1][j] == '\0')
-// 				return (0);
-// 			if (j > 0 && (file->map[i - 1][j - 1] == ' ' 
-// 				|| file->map[i - 1][j - 1] == '\0'))
-// 				return (0);
-// 			if (file->map[i - 1][j + 1] == ' ' || file->map[i - 1][j + 1] == '\0')
-// 				return (0);
-// 			if (file->map[i][j] == '0' && j > 0 && file->map[i][j - 1] == ' ')
-// 				return (0);
-// 			if (file->map[i][j] == '0' && file->map[i][j + 1] == ' ')
-// 				return (0);
-// 			if (file->map[i + 1][j] == ' ' || file->map[i + 1][j] == '\0')
-// 				return (0);
-// 			if (j > 0 && (file->map[i + 1][j - 1] == ' ' || file->map[i + 1][j -1] == '\0'))
-// 				return (0);
-// 			if (file->map[i + 1][j + 1] == ' ' || file->map[i + 1][j + 1] == '\0')
-// 				return (0);
-// 		}
-// 		j++;
-// 	}
-// 	return (1);
-// }
 
 int	check_spaces(t_map *file, int len_line, int i, int j)
 {
@@ -238,7 +209,7 @@ void	check_map(t_map *file)
 	while (i < file->nr_rows_map)
 	{
 		len_line = ft_strlen(file->map[i]);
-		printf("line is %d - and lenght line: %d\n", i, len_line); //can be removed
+		printf("line is %d - and lenght line: %d\n", i, len_line);//to remove
 		check_cardinal_points(file, len_line, i);
 		if (i == 0)
 			check_north_wall(file, len_line);

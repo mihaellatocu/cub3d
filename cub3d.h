@@ -6,7 +6,7 @@
 /*   By: mtocu <mtocu@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/31 17:23:26 by mtocu             #+#    #+#             */
-/*   Updated: 2025/02/04 16:40:13 by mtocu            ###   ########.fr       */
+/*   Updated: 2025/02/05 13:25:47 by mtocu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,10 @@ typedef struct s_map
 	int		poz_x;
 	int		poz_y;
 	int		nr_cardinals;
+
+	void	*mlx;
+	void	*win;
+	
 }			t_map;
 
 
@@ -96,5 +100,7 @@ void	free_matrix(t_map *file);
 void	free_temp_matrix(t_map *file);
 void	ft_clean(t_map *file, char *str);
 
+//			EXEC
+void	execution(t_map *file);
 
 #endif
