@@ -1,9 +1,9 @@
 # Reset terminal color at end
-RESET=\x1b[0m
-GREEN=\x1b[1;32m
-RED=\x1b[1;31m
-YELLOW=\x1b[1;33m
-CYAN=\x1b[1;36m
+RESET=\033[0m
+GREEN=\033[1;32m
+RED=\033[1;31m
+YELLOW=\033[1;33m
+CYAN=\033[1;36m
 
 NAME = cub3d
 CC = gcc
