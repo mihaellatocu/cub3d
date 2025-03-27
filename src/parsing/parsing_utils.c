@@ -67,7 +67,8 @@ void	read_map_lines(int fd, t_map *map)
 	int		in_map;
 
 	in_map = 0;
-	while ((line = get_next_line(fd)))
+	line = get_next_line(fd);
+	while (line)
 	{
 		if (!in_map)
 		{
@@ -75,6 +76,7 @@ void	read_map_lines(int fd, t_map *map)
 			{
 				in_map = 1;
 				free(line);
+				line = get_next_line(fd);
 				continue ;
 			}
 		}
@@ -84,6 +86,7 @@ void	read_map_lines(int fd, t_map *map)
 				map->map_line = join_lines(map->map_line, line);
 		}
 		free(line);
+		line = get_next_line(fd);
 	}
 }
 
