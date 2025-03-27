@@ -41,6 +41,7 @@ char	*ft_strtrim(char *s1, char const *set)
 	while (end > start && ft_check_in_set(s1[end - 1], set))
 		end--;
 	str = malloc(sizeof(char) * (end - start) + 1);
+	ft_bzero(str, end - start + 1);
 	if (!str)
 		return (NULL);
 	i = 0;

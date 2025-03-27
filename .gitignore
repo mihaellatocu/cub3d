@@ -1,0 +1,25 @@
+# Object files
+*.o
+*.d
+obj/
+
+# Binary
+cub3d
+
+# MinilibX & Libft builds
+minilibx-linux/libmlx*
+minilibx-linux/obj/
+minilibx-linux/test/
+minilibx-linux/*.a
+
+lib/*.a
+lib/*.o
+
+# OS junk files
+.DS_Store
+*.swp
+*.swo
+
+# Debug files
+vgcore.*
+core

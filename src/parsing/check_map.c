@@ -6,219 +6,145 @@
 /*   By: mtocu <mtocu@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/30 19:29:44 by mtocu             #+#    #+#             */
-/*   Updated: 2025/02/05 11:39:14 by mtocu            ###   ########.fr       */
+/*   Updated: 2025/03/27 17:30:00 by mtocu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../cub3d.h"
 
-int	check_cardinal(char c)
+/* Places the player on the map based on the direction found in the map.
+   Sets the player's orientation vector accordingly (dir_x and dir_y). */
+void	set_player_position(t_map *map, char direction, int tile_row, int tile_col)
 {
-	if (c == 'N' || c == 'S' || c == 'W' || c == 'E')
+	map->pos_y = (double)tile_row;
+	map->pos_x = (double)tile_col;
+	map->p_dir = direction;
+	if (direction == 'N')
+	{
+		map->dir_x = 0;
+		map->dir_y = -1;
+	}
+	else if (direction == 'S')
+	{
+		map->dir_x = 0;
+		map->dir_y = 1;
+	}
+	else if (direction == 'W')
+	{
+		map->dir_x = -1;
+		map->dir_y = 0;
+	}
+	else if (direction == 'E')
+	{
+		map->dir_x = 1;
+		map->dir_y = 0;
+	}
+}
+
+/* Iterates through the map array to determine maximum width (longest row),
+   player spawn location, and total height of the map.
+   Fails silently if more than one player position is found. */
+void	set_map_dimensions(t_map *map, char **array, int row_index, int col_index)
+{
+	int	max_width;
+	int	player_count;
+
+	max_width = 0;
+	player_count = 0;
+	while (array[row_index])
+	{
+		col_index = 0;
+		while (array[row_index][col_index])
+		{
+			if (is_allowed_char(array[row_index][col_index], "NSEW"))
+			{
+				set_player_position(map, array[row_index][col_index],
+					row_index, col_index);
+				player_count++;
+			}
+			col_index++;
+		}
+		if (col_index > max_width)
+			max_width = col_index;
+		row_index++;
+	}
+	if (player_count != 1)
+		return ;
+	map->width_map = max_width;
+	map->height_map = row_index;
+}
+
+/* Confirms that all required texture paths and both RGB values for
+   floor and ceiling have been assigned. Otherwise, triggers a parse error. */
+void	verify_map_assets(t_map *map)
+{
+	int	index;
+
+	index = 0;
+	if (!map->img[0].path || !map->img[1].path
+		|| !map->img[2].path || !map->img[3].path)
+		handle_parse_error(map, RED"Error:\nMissing textures.\n"RST);
+	while (index < 3)
+	{
+		if (map->rgb_floor[index] == -1 || map->rgb_sky[index] == -1)
+			handle_parse_error(map, RED"Error:\nMissing colour values.\n"RST);
+		index++;
+	}
+}
+
+/* Determines the type of config line (texture or colour),
+   splits it, and dispatches it to the appropriate assignment function.
+   If the line is malformed, it triggers a parse error. */
+static void	handle_config_line(t_map *map, char *line, char **split)
+{
+	if (!ft_strncmp(line, "NO", 2))
+		assign_texture_path(map, &map->img[0].path, split);
+	else if (!ft_strncmp(line, "SO", 2))
+		assign_texture_path(map, &map->img[1].path, split);
+	else if (!ft_strncmp(line, "WE", 2))
+		assign_texture_path(map, &map->img[2].path, split);
+	else if (!ft_strncmp(line, "EA", 2))
+		assign_texture_path(map, &map->img[3].path, split);
+	else if (!ft_strncmp(line, "F", 1))
+		parse_rgb_map(map, map->rgb_floor, split);
+	else if (!ft_strncmp(line, "C", 1))
+		parse_rgb_map(map, map->rgb_sky, split);
+}
+
+/* Cleans the incoming line, checks if it's a valid config entry,
+   and routes to the corresponding handler.
+   Returns 1 when all required map values are loaded, 0 otherwise. */
+int	analyse_map_line(t_map *map, char *line)
+{
+	char	*clean_line;
+	char	**split;
+
+	clean_line = ft_strtrim(line, " \t\n\r");
+	split = NULL;
+	if (!clean_line)
+		handle_parse_error(map, RED"Memory allocation failed.\n"RST);
+	if (clean_line[0] == '\0')
+	{
+		free(clean_line);
+		return (0);
+	}
+	if ((!ft_strncmp(clean_line, "NO", 2) && clean_line[2] == ' ')
+		|| (!ft_strncmp(clean_line, "SO", 2) && clean_line[2] == ' ')
+		|| (!ft_strncmp(clean_line, "WE", 2) && clean_line[2] == ' ')
+		|| (!ft_strncmp(clean_line, "EA", 2) && clean_line[2] == ' ')
+		|| (!ft_strncmp(clean_line, "F", 1) && clean_line[1] == ' ')
+		|| (!ft_strncmp(clean_line, "C", 1) && clean_line[1] == ' '))
+		split = ft_split(clean_line, ' ');
+	else
+	{
+		free(clean_line);
+		handle_parse_error(map, RED"Error:\nInvalid texture/colour entry.\n"RST);
+	}
+	handle_config_line(map, clean_line, split);
+	free(clean_line);
+	if (map->img[0].path && map->img[1].path && map->img[2].path
+		&& map->img[3].path && map->rgb_floor[0] != -1
+		&& map->rgb_sky[0] != -1)
 		return (1);
 	return (0);
-}
-
-int	check_spaces(t_map *file, int len_line, int i, int j)
-{
-	while (j < len_line && i > 0 && i < file->nr_rows_map - 1)
-	{
-		if (file->map[i][j] == '0' || check_cardinal(file->map[i][j]))
-		{
-			if ((file->map[i - 1][j] == ' ' || file->map[i - 1][j] == '\0')
-			|| (j > 0 && (file->map[i - 1][j - 1] == ' '
-			|| file->map[i - 1][j - 1] == '\0'))
-			|| (file->map[i - 1][j + 1] == ' '
-			|| file->map[i - 1][j + 1] == '\0')
-			|| (j > 0 && file->map[i][j - 1] == ' ')
-			|| (file->map[i][j + 1] == ' ')
-			|| (file->map[i + 1][j] == ' ' || file->map[i + 1][j] == '\0')
-			|| (j > 0 && (file->map[i + 1][j - 1] == ' '
-			|| file->map[i + 1][j -1] == '\0'))
-			|| (file->map[i + 1][j + 1] == ' '
-			|| file->map[i + 1][j + 1] == '\0'))
-				return (0);
-		}
-		j++;
-	}
-	return (1);
-}
-
-void	check_cardinal_points(t_map *file, int len_line, int i)
-{
-	int	j;
-
-	j = 0;
-	while (j < len_line)
-	{
-		if (check_cardinal(file->map[i][j]) == 1)
-		{
-			file->poz_x = i;
-			file->poz_y = j;
-			file->nr_cardinals++;
-		}
-		j++;
-	}
-}
-
-void	check_left_wall(t_map *file, char *row, int len_line)
-{
-	int	j;
-
-	j = 0;
-	while (j < len_line)
-	{
-		if (row[0] == '0' || check_cardinal(row[0]))
-			ft_clean(file, RED "Error:\nThe left wall is not correct.\n" RST);
-		else if (row[0] == ' ')
-		{
-			while (j < len_line)
-			{
-				while (row[j + 1] == ' ')
-					j++;
-				if (row[j + 1] == '1')
-					return ;
-				else
-					ft_clean(file, RED "Error:\nLeft wall is invalid.\n" RST);
-			}
-		}
-		j++;
-	}
-}
-
-void	check_right_wall(t_map *file, char *row, int len_line, int i)
-{
-	int	prev;
-	int	next;
-
-	if (row[len_line] != '1')
-		ft_clean (file, RED "Error:\nThe right wall is invalid." RST);
-	if (i > 1)
-	{
-		prev = ft_strlen(file->map[i - 1]);
-		if (prev > len_line + 1 && (file->map[i - 1][len_line + 1] == '0' \
-		|| check_cardinal(file->map[i - 1][len_line + 1])))
-			ft_clean (file, RED "Error:\nThe right wall edge is invalid." RST);
-	}
-	if (i < file->nr_rows_map - 2)
-	{
-		next = ft_strlen(file->map[i + 1]);
-		if (next > len_line + 1 && (file->map[i + 1][len_line + 1] == '0' \
-		|| check_cardinal(file->map[i + 1][len_line + 1])))
-			ft_clean (file, RED "Error:\nThe right wall edge is invalid." RST);
-	}
-}
-
-void	check_north_wall(t_map *file, int len_line)
-{
-	int	j;
-	int	i;
-
-	j = 0;
-	i = 0;
-	while (j < len_line)
-	{
-		if (file->map[i][j] == '0' || check_cardinal(file->map[i][j]))
-			ft_clean(file, RED "Error:\nThe top row is incorrect." RST);
-		else if (file->map[i][j] == ' ')
-		{
-			while (file->map[i + 1][j] == ' ')
-				i++;
-			if (file->map[i + 1][j] != '1')
-				ft_clean(file, RED "Error:\nThe top row is incorrect." RST);
-		}
-		j++;
-		i = 0;
-	}
-}
-
-void	check_south_wall(t_map *file, int len_line)
-{
-	int	i;
-	int	j;
-	int	k;
-
-	i = file->nr_rows_map - 1;
-	j = 0;
-	while (j < len_line)
-	{
-		if (file->map[i][j] != '1' && file->map[i][j] != ' ')
-			ft_clean(file, RED "Error:\nThe south wall is incorrect.\n" RST);
-		if (file->map[i][j] == ' ')
-		{
-			k = i;
-			while (k > 0 && file->map[k][j] == ' ')
-				k--;
-			if (file->map[k][j] != '1' || k == 0)
-				ft_clean(file, RED "Error:\nSouth wall is incorrect.\n" RST);
-		}
-		j++;
-	}
-}
-
-void	remove_spaces_map(char *row)
-{
-	int	j;
-
-	j = ft_strlen(row) - 1;
-	while (j >= 0 && row[j] == ' ')
-	{
-		row[j] = '\0';
-		j--;
-	}
-}
-
-void	ck_if_have_variables(t_map *file)
-{
-	if (file->nr_cardinals != 1)
-		ft_clean(file, "Error:\nThe number of cardinal points is incorrect.");
-	if (file->ceiling[0] == -1 || file->ceiling[1] == -1
-		|| file->ceiling[2] == -1 || file->floor[0] == -1
-		|| file->floor[1] == -1 || file->floor[2] == -1)
-		ft_clean(file, RED "Error:\nThe RGB is not valid." RST);
-	if (file->north == NULL || file->south == NULL || file->west == NULL
-		|| file->east == NULL)
-		ft_clean(file, RED "Error:\nThe textures are missing." RST);
-}
-
-void	ck_empty_lines(t_map *file)
-{
-	int		i;
-	int		len_line;
-
-	i = 0;
-	while (i < file->nr_rows_map)
-	{
-		remove_spaces_map(file->map[i]);
-		len_line = ft_strlen(file->map[i]);
-		if (len_line == 0)
-			ft_clean(file, RED "Error:\nThe line is empty.*" RST);
-		i++;
-	}
-}
-
-void	check_map(t_map *file)
-{
-	int	i;
-	int	len_line;
-
-	i = 0;
-	if (file->nr_rows_map < 2)
-		ft_clean(file, RED "Error:\nThe map is incorrect.\n" RST);
-	ck_empty_lines(file);
-	while (i < file->nr_rows_map)
-	{
-		len_line = ft_strlen(file->map[i]);
-		printf("line is %d - and lenght line: %d\n", i, len_line);//to remove
-		check_cardinal_points(file, len_line, i);
-		if (i == 0)
-			check_north_wall(file, len_line);
-		check_left_wall(file, file->map[i], len_line);
-		check_right_wall(file, file->map[i], len_line - 1, i);
-		if (check_spaces(file, len_line, i, 0) == 0)
-			ft_clean(file, RED "Error\nThe walls are inconsistent.\n" RST);
-		i++;
-	}
-	check_south_wall(file, len_line);
-	ck_if_have_variables(file);
 }
