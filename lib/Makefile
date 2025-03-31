@@ -12,7 +12,9 @@ SOURCES = \
 		ft_lstnew.c ft_lstadd_front.c ft_lstsize.c \
 		ft_lstlast.c ft_lstadd_back.c ft_lstdelone.c \
 		ft_lstclear.c ft_lstiter.c ft_lstmap.c \
-		ft_isspace.c ft_free_char.c
+		ft_isspace.c ft_free_char.c ft_printf.c \
+		ft_putchar_printf.c ft_putstr_printf.c ft_format.c \
+		ft_putnbr_printf.c get_next_line.c get_next_line_utils.c
 
 OBJECTS = $(SOURCES:.c=.o)
 BOBJECTS = $(BSOURCES:.c=.o)

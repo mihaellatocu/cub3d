@@ -12,103 +12,70 @@
 
 #include "libft.h"
 
-static int	word_count(char *str, char c)
+static int	ft_count(char const *s, char c)
 {
-	int	count;
-	int	sep;
 	int	i;
+	int	count;
 
-	count = 0;
-	sep = 0;
 	i = 0;
-	while (str[i] != '\0')
+	count = 0;
+	while (s[i] != '\0')
 	{
-		if (str[i] != c && sep == 0)
-		{
-			sep = 1;
+		while (s[i] && s[i] == c)
+			i++;
+		if (s[i] && s[i] != c)
 			count++;
-		}
-		else if (str[i] == c)
-			sep = 0;
-		i++;
+		while (s[i] && s[i] != c)
+			i++;
 	}
-	count++;
 	return (count);
 }
 
-static char	**ft_free(char **arr, int count)
+static char	*ft_word(char const *s, char c)
 {
-	int	i;
-
-	i = 0;
-	while (i < count)
-	{
-		free (arr[i]);
-		i++;
-	}
-	free (arr);
-	return (NULL);
-}
-
-static char	*fill_string(char *str, int *start, int end)
-{
-	int		start_word;
 	int		i;
+	int		size;
 	char	*word;
 
 	i = 0;
-	start_word = *start;
-	word = (char *)malloc((end - start_word + 1) * sizeof(char));
-	if (!word)
+	size = 0;
+	while (s[size] && s[size] != c)
+		size++;
+	word = ft_calloc(sizeof(char), size + 1);
+	if (word == NULL)
 		return (NULL);
-	while (start_word < end)
+	while (i < size)
 	{
-		word[i] = str[start_word];
+		word[i] = s[i];
 		i++;
-		start_word++;
 	}
-	word[i] = '\0';
-	*start = -1;
 	return (word);
 }
 
-static char	**create_array(char *s, char c)
-{
-	char	**arr;
-
-	arr = malloc(word_count(s, c) * sizeof(char *));
-	if (!arr)
-		return (NULL);
-	return (arr);
-}
-
-char	**ft_split(char *s, char c)
+char	**ft_split(char const *s, char c)
 {
 	int		i;
-	int		j;
-	int		start_w;
-	char	**arr;
+	int		count;
+	char	**tab;
 
-	arr = create_array((char *)s, c);
-	if (!arr)
-		return (0);
-	i = -1;
-	j = 0;
-	start_w = -1;
-	while (++i <= ft_strlen((char *)s))
+	i = 0;
+	count = ft_count(s, c);
+	tab = ft_calloc(sizeof(char *), count + 1);
+	if (tab == NULL)
+		return (NULL);
+	while (*s)
 	{
-		if (s[i] != c && start_w < 0)
-			start_w = i;
-		else if ((s[i] == c || i == ft_strlen((char *)s)) && start_w >= 0)
+		while (*s && *s == c)
+			s++;
+		if (*s && *s != c)
 		{
-			arr[j] = fill_string(s, &start_w, i);
-			if (!arr[j])
-				return (ft_free(arr, j));
-			j++;
+			tab[i] = ft_word(s, c);
+			i++;
 		}
+		while (*s && *s != c)
+			s++;
 	}
-	arr[j] = 0;
-	return (arr);
+	return (tab);
 }
 /*
 int	main()

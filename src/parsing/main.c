@@ -13,32 +13,66 @@
 #include "../../cub3d.h"
 
 /*
-** Validates the command line arguments.
-** Ensures exactly one argument is passed, the file can be opened,
-** and it has a ".cub" extension.
+** Validates that the given filename ends with the ".cub" extension.
+** Returns 1 if valid, 0 otherwise.
 */
-int	validate_args(int argc, char **argv)
+int	ft_test_extension(char *argv)
 {
-	int	len;
-	int	fd;
+	int	i;
+	int	j;
 
-	if (argc < 2)
-		return (printf(RED "Error:\nThe Map was not provided.\n" RST), 1);
-	else if (argc != 2)
-		return (printf(RED "Error\nMultiple arguments provided.\n" RST), 1);
-	fd = open(argv[1], O_RDONLY);
-	if (fd == -1)
-		return (printf(RED "Error:\nError opening the file.\n" RST), 1);
-	close(fd);
-	len = ft_strlen(argv[1]);
-	if (!ft_strnstr(argv[1] + len - 4, ".cub", len))
-		return (printf(RED "Error:\nWrong '.cub' format\n" RST), 1);
-	return (0);
+	i = ft_strlen(argv);
+	j = 0;
+	i -= 4;
+	while (argv[i] != '\0')
+	{
+		if (j == 0 && argv[i] != '.')
+			return (0);
+		if (j == 1 && argv[i] != 'c')
+			return (0);
+		if (j == 2 && argv[i] != 'u')
+			return (0);
+		if (j == 3 && argv[i] != 'b')
+			return (0);
+		i++;
+		j++;
+	}
+	return (1);
 }
 
 /*
-** Initializes all fields in the map structure to safe defaults.
-** Prepares the map struct for parsing and game setup.
+** Checks if the provided file path has a valid .cub extension,
+** and if the file can be opened and is not empty.
+** Returns 1 if valid, 0 otherwise.
+*/
+int	validate_args(char *argv)
+{
+	int		fd;
+	int		result;
+	char	test[1];
+
+	if (!ft_test_extension(argv))
+	{
+		ft_printf("Error\nBad extension\n");
+		return (0);
+	}
+	fd = open(argv, O_RDONLY);
+	result = read(fd, test, 1);
+	if (result <= 0)
+	{
+		if (result == 0)
+			ft_printf("Error\nEmpty file\n");
+		else if (result < 0)
+			ft_printf("Error\nInvalid entry\n");
+		return (0);
+	}
+	close(fd);
+	return (1);
+}
+
+/*
+** Initializes the t_map structure to default values.
+** Resets all fields before parsing the map and loading textures.
 */
 void	init_map_data(t_map *map)
 {
@@ -59,37 +93,35 @@ void	init_map_data(t_map *map)
 	while (i < 5)
 	{
 		map->img[i].image = NULL;
-		map->img[i].pixels = NULL;
-		if (i < 4)
-			map->img[i].path = NULL;
+		map->img[i].path = NULL;
 		i++;
 	}
 	map->minimap.image = NULL;
-	map->minimap.pixels = NULL;
 }
 
 /*
-** Program entry point.
-** Validates arguments, initializes data, parses the map,
-** and starts the game loop.
+** Entry point of the program.
+** Validates arguments, parses the map, and starts the game loop.
 */
-int	main(int argc, char **argv)
+int	main(int ac, char **av)
 {
 	t_map	map;
 	int		fd;
 
 	init_map_data(&map);
-	if (validate_args(argc, argv) == 1)
-		exit(1);
-	fd = open(argv[1], O_RDONLY);
+	if (ac != 2)
+		parse_err(&map, "Error\nOne argument required\n");
+	if (!validate_args(av[1]))
+		return (1);
+	fd = open(av[1], O_RDONLY);
 	if (fd <= 0)
 	{
-		printf(RED "Error\nFailed to open file\n" RST);
+		ft_printf("Error\nFailed to open file\n");
 		return (37);
 	}
 	if (!parse_map(&map, fd))
 	{
-		free_string_array(map.map_tab);
+		free_str_array(map.map_tab);
 		return (38);
 	}
 	start_game(&map);

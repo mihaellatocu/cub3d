@@ -7,17 +7,14 @@ CYAN=\033[1;36m
 
 NAME = cub3d
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror -g
+CFLAGS = -Wall -Wextra -Werror -g -I./minilibx-linux
 RM = rm -rf
 OBJDIR = obj
 
 SRC = \
 	src/parsing/main.c \
-	src/parsing/get_next_line.c \
-	src/parsing/get_next_line_utils.c \
 	src/parsing/check_map.c \
 	src/parsing/check_texture.c \
-	src/parsing/check_horizontal.c \
 	src/parsing/map_parse_utils.c \
 	src/parsing/parse_colours.c \
 	src/parsing/parsing_utils.c \

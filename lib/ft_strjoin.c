@@ -10,33 +10,35 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "./libft.h"
 
 char	*ft_strjoin(char *s1, char *s2)
 {
-	unsigned char	*new_str;
-	size_t			j;
-	size_t			i;
+	int		size;
+	int		i;
+	char	*str;
 
-	j = 0;
 	i = 0;
-	if (!s1 && !s2)
+	size = (ft_strlen(s1) + ft_strlen(s2));
+	str = malloc(sizeof(char) * size + 1);
+	str[size] = '\0';
+	if (str == NULL)
 		return (NULL);
-	new_str = malloc(sizeof(char) * ((int)ft_strlen(s1) + \
-				(int)ft_strlen(s2)) + 1);
-	while (s1 && (int)i < (int)ft_strlen(s1))
+	while (s1 && *s1)
 	{
-		new_str[i] = s1[i];
+		str[i] = *s1;
 		i++;
+		s1++;
 	}
-	while (s2 && (int)j < (int)ft_strlen(s2))
+	while (s2 && *s2)
 	{
-		new_str[i + j] = s2[j];
-		j++;
+		str[i] = *s2;
+		i++;
+		s2++;
 	}
-	new_str[i + j] = '\0';
-	return ((char *)new_str);
+	return (str);
 }
+
 /*
 int	main(void)
 {

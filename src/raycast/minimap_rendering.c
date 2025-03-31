@@ -1,8 +1,12 @@
 #include "../../cub3d.h"
 
 /*
-** Renders the minimap based on the map layout.
-** Tiles are coloured depending on content: wall, space, or player start.
+** Renders the minimap by looping through the entire map grid.
+** Each tile is drawn as a 7x7 square based on its character:
+** - '1' (wall) is black.
+** - '0' (empty space) uses the ceiling colour.
+** - 'N', 'S', 'E', 'W' (player position) is yellow.
+** - Any other character is rendered dark grey.
 */
 void	draw_minimap(t_map *map)
 {
@@ -10,6 +14,7 @@ void	draw_minimap(t_map *map)
 	int	j;
 
 	i = 0;
+	j = 0;
 	while (map->map_tab[i])
 	{
 		j = 0;
@@ -18,8 +23,8 @@ void	draw_minimap(t_map *map)
 			if (map->map_tab[i][j] == '1')
 				draw_minimap_tile(map, j * 7, i * 7, 0x000000);
 			else if (map->map_tab[i][j] == '0')
-				draw_minimap_tile(map, j * 7, i * 7,
-					compose_color(0, map->rgb_sky[0], map->rgb_sky[1], map->rgb_sky[2]));
+				draw_minimap_tile(map, j * 7, i * 7, compose_color(0, map->rgb_sky[0],
+						map->rgb_sky[1], map->rgb_sky[2]));
 			else if (is_allowed_char(map->map_tab[i][j], "NSEW"))
 				draw_minimap_tile(map, j * 7, i * 7, 0xEEEE20);
 			else
@@ -32,36 +37,42 @@ void	draw_minimap(t_map *map)
 
 /*
 ** Updates the player's position on the minimap.
-** If the player has moved, redraws the old tile background.
+** - Draws the player’s new position in yellow.
+** - Restores the previous position with ceiling colour if moved.
+** - Prevents redrawing if the player hasn't moved in that axis.
 */
 void	update_minimap(t_map *map, int old_x, int old_y)
 {
-	draw_minimap_tile(map, (int)map->pos_x * 7,
-		(int)map->pos_y * 7, 0xEEEE20);
-	if ((int)map->pos_x != old_x || (int)map->pos_y != old_y)
+	draw_minimap_tile(map, (int)map->pos_x * 7, (int)map->pos_y * 7, 0xEEEE20);
+	if ((int)map->pos_x != old_x)
+		draw_minimap_tile(map, old_x * 7, old_y * 7,
+			compose_color(0, map->rgb_sky[0], map->rgb_sky[1], map->rgb_sky[2]));
+	if ((int)map->pos_y != old_y)
 		draw_minimap_tile(map, old_x * 7, old_y * 7,
 			compose_color(0, map->rgb_sky[0], map->rgb_sky[1], map->rgb_sky[2]));
 }
 
 /*
-** Places a pixel at (x, y) in the minimap image with the given colour.
-** Ensures drawing is within bounds of the minimap buffer.
+** Draws a single pixel on the minimap image buffer at (x, y).
+** - Verifies the coordinates are within screen limits.
+** - Writes the given colour at the computed memory location.
 */
 void	minimap_place_pixel(t_map *map, int x, int y, int color)
 {
 	char	*pixel;
 
-	if (y < 0 || y > map->display_height - 1
-		|| x < 0 || x > map->display_width - 1)
+	if (y < 0 || y > map->display_height - 1 || x < 0
+		|| x > map->display_width - 1)
 		return ;
 	pixel = (map->minimap.pixels + (y * map->minimap.line_size
-			+ x * (map->minimap.bits_per_pixel / 8)));
+				+ x * (map->minimap.bits_per_pixel / 8)));
 	*(int *)pixel = color;
 }
 
 /*
-** Draws a 7x7 square tile on the minimap at the specified (x, y) position.
-** Each tile represents a map cell (wall, floor, player, etc).
+** Draws a 7x7 square tile on the minimap starting at (x, y).
+** - Used to represent a single tile (wall, space, player, etc).
+** - Calls `minimap_place_pixel` for every pixel in the tile.
 */
 void	draw_minimap_tile(t_map *map, int x, int y, int color)
 {
@@ -69,6 +80,7 @@ void	draw_minimap_tile(t_map *map, int x, int y, int color)
 	int	j;
 
 	i = 0;
+	j = 0;
 	while (i < 7)
 	{
 		j = 0;

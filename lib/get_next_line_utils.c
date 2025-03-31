@@ -10,79 +10,56 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <unistd.h>
-#include "../../get_next_line.h"
-#include <stdint.h>
+#include "./libft.h"
 
-void	*ft_calloc(size_t count, size_t size)
+char	*ft_gnl_strjoin(char *s1, char *s2)
 {
-	unsigned char	*a;
-	int				n;
-	void			*ptr;
-
-	if ((count >= SIZE_MAX || size >= SIZE_MAX) && count && size)
-		return (NULL);
-	ptr = (void *)malloc(count * size);
-	if (ptr == NULL)
-		return (NULL);
-	a = ptr;
-	n = count * size;
-	while (n)
-	{
-		*a = '\0';
-		a++;
-		n--;
-	}
-	return (ptr);
-}
-
-char	*ft_strjoin(char *s1, char *s2)
-{
-	unsigned char	*new_str;
-	int				j;
-	int				i;
+	int		size;
+	int		i;
+	char	*str;
 
 	i = 0;
-	j = 0;
-	if (!s1 && !s2)
+	size = (ft_gnl_strlen(s1) + ft_gnl_strlen(s2));
+	str = malloc(sizeof(char) * size + 1);
+	if (str == NULL)
 		return (NULL);
-	new_str = malloc(sizeof(char) * (ft_strlen(s1) + ft_strlen(s2)) + 1);
-	while (s1 && i < ft_strlen(s1))
+	while (s1 && s1[i])
 	{
-		new_str[i] = s1[i];
+		str[i] = s1[i];
 		i++;
 	}
-	while (s2 && j < ft_strlen(s2))
+	while (*s2)
 	{
-		new_str[i + j] = s2[j];
-		j++;
+		str[i] = *s2;
+		i++;
+		s2++;
 	}
-	new_str[i + j] = '\0';
-	return ((char *)new_str);
+	str[size] = '\0';
+	free(s1);
+	return (str);
 }
 
-int	ft_strlen(char *str)
+int	ft_gnl_strlen(char *str)
 {
 	int	i;
 
 	i = 0;
-	while (str[i])
+	while (str && str[i])
 		i++;
 	return (i);
 }
 
-char	*ft_strchr(char *s, int c)
+char	*ft_gnl_strchr(char *s, int c)
 {
-	int	i;
+	int				i;
+	unsigned char	search;
 
+	search = (unsigned char)c;
 	i = 0;
-	while (s[i])
-	{
-		if (s[i] == (char)c)
-			return ((char *)&s[i]);
+	while (s[i] && s[i] != search)
 		i++;
-	}
-	if (s[i] == (char)c)
-		return ((char *)&s[i]);
-	return (NULL);
+	if (s[i] == search)
+		return ((char *)s + i);
+	else
+		return (NULL);
 }

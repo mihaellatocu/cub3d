@@ -13,111 +13,115 @@
 #include "../../cub3d.h"
 
 /*
-** Checks if the space above the current cell is valid.
-** If the above character exists and is not a wall ('1'), returns 0 (invalid).
-*/
-int	is_valid_space_above(char **column, int y, int x)
-{
-	int	row_len;
-
-	if (y > 0 && column[y - 1])
-	{
-		row_len = ft_strlen(column[y - 1]);
-		if (x < row_len && column[y - 1][x] != '1')
-			return (0);
-	}
-	return (1);
-}
-
-/*
-** Returns the character at position [y][x] in the map,
-** or a space character if the index is out of bounds.
-*/
-char	get_column_char(char **column, int y, int x)
-{
-	int	row_len;
-
-	if (!column[y])
-		return (' ');
-	row_len = ft_strlen(column[y]);
-	if (x < row_len)
-		return (column[y][x]);
-	return (' ');
-}
-
-/*
-** Skips over empty spaces in a vertical column.
-** Checks that the next non-space character is a wall ('1').
-*/
-int	skip_spaces_check_wall(char **column, int *y, int x, int height)
-{
-	char	current;
-
-	while (*y < height && column[*y])
-	{
-		current = get_column_char(column, *y, x);
-		if (current != ' ')
-			break ;
-		(*y)++;
-	}
-	if (*y < height && column[*y])
-	{
-		current = get_column_char(column, *y, x);
-		if (current != '1')
-			return (0);
-	}
-	return (1);
-}
-
-/*
-** Validates a vertical column in the map.
-** Ensures that spaces are enclosed and valid characters are used.
+** Checks a vertical slice of the map from top to bottom at column [x].
+** Ensures the column is enclosed properly:
+** - Top must be '1' or space.
+** - All characters must be valid ('1', '0', 'NSEW', ' ').
+** - Spaces must be surrounded vertically by walls.
 */
 int	check_vertical_column(char **column, int y, int x, int height)
 {
-	char	current;
-
-	while (y < height && column[y])
+	while (y < height)
 	{
-		current = get_column_char(column, y, x);
-		if (y == 0 && !is_allowed_char(current, "1 "))
+		if (y == 0 && !is_allowed_char(column[y][x], "1 "))
 			return (0);
-		if (!is_allowed_char(current, "10NSEW "))
+		if (!is_allowed_char(column[y][x], "10NSEW "))
 			return (0);
-		if (current == ' ')
+		if (column[y][x] == ' ')
 		{
-			if (!is_valid_space_above(column, y, x))
+			if (y > 0 && column[y - 1][x] != '1')
 				return (0);
-			if (!skip_spaces_check_wall(column, &y, x, height))
+			while (y < height && column[y][x] == ' ')
+				y++;
+			if (y < height && column[y][x] != '1')
 				return (0);
-			continue ;
 		}
-		y++;
+		if (y < height)
+			y++;
 	}
-	if (y > 0 && column[y - 1])
-	{
-		current = get_column_char(column, y - 1, x);
-		if (!is_allowed_char(current, "1 "))
-			return (0);
-	}
+	if (!is_allowed_char(column[y - 1][x], "1 "))
+		return (0);
 	return (1);
 }
 
 /*
-** Iterates over each column index and validates vertical structure for the map.
+** Iterates across all vertical columns of the map (from x = 0 to width).
+** Uses check_vertical_column to validate wall closure for each column.
 */
 int	validate_vertical(t_map *map, int y, int x)
 {
-	int	max_width;
-
-	if (!map || !map->map_tab)
-		return (0);
-	max_width = map->width_map;
-	while (x < max_width)
+	while (map->map_tab[y][x])
 	{
 		if (!check_vertical_column(map->map_tab, y, x, map->height_map))
 			return (0);
 		x++;
+	}
+	return (1);
+}
+
+/*
+** Validates a single horizontal line of the map:
+** - Must start with '1' or space.
+** - All characters must be valid.
+** - Spaces must be enclosed by walls on both sides.
+** - Ends must be '1' or space.
+*/
+int	check_horizontal_line(t_map *map, char *line, int x)
+{
+	while (line[x])
+	{
+		if (x == 0 && !is_allowed_char(line[x], "1 "))
+			return (0);
+		if (!is_allowed_char(line[x], "10NSEW "))
+			parse_err(map, "Error\nInvalid character on map\n");
+		if (line[x] == ' ')
+		{
+			if (x > 0 && line[x - 1] != '1')
+				return (0);
+			while (line[x] && line[x] == ' ')
+				x++;
+			if (line[x] && line[x] != '1')
+				return (0);
+		}
+		if (line[x])
+			x++;
+	}
+	if (!is_allowed_char(line[x - 1], "1 "))
+		return (0);
+	return (1);
+}
+
+/*
+** Iterates through each row (horizontal line) of the map.
+** Verifies that all rows are properly enclosed using check_horizontal_line.
+*/
+int	validate_horizontal(t_map *map, int y, int x)
+{
+	while (map->map_tab[y])
+	{
+		if (!check_horizontal_line(map, map->map_tab[y], x))
+			return (0);
+		y++;
+	}
+	return (1);
+}
+
+/*
+** Main wall validation function.
+** Checks both horizontal and vertical enclosure of the map.
+** If any check fails, texture memory is freed and returns 0.
+*/
+int	validate_map_walls(t_map *map)
+{
+	int	y;
+	int	x;
+
+	y = 0;
+	x = 0;
+	if (!validate_horizontal(map, y, x) || !validate_vertical(map, y, x))
+	{
+		free_texture_data(map);
+		return (0);
 	}
 	return (1);
 }

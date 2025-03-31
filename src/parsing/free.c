@@ -13,10 +13,11 @@
 #include "../../cub3d.h"
 
 /*
-** Destroys all images stored in the map, including minimap image,
-** and sets their pointers to NULL to avoid use-after-free.
+** Frees all allocated MLX images used for rendering the game and minimap.
+** This prevents memory leaks from textures and minimap image buffers.
+** Checks if MLX is initialised before trying to destroy images.
 */
-void	destroy_images(t_map *map)
+void	destroy_img(t_map *map)
 {
 	int	i;
 
@@ -26,22 +27,17 @@ void	destroy_images(t_map *map)
 		while (i < 5)
 		{
 			if (map->img[i].image)
-			{
 				mlx_destroy_image(map->mlx, map->img[i].image);
-				map->img[i].image = NULL;
-			}
 			i++;
 		}
 		if (map->minimap.image)
-		{
 			mlx_destroy_image(map->mlx, map->minimap.image);
-			map->minimap.image = NULL;
-		}
 	}
 }
 
 /*
-** Frees dynamically allocated file path strings for textures in the map.
+** Frees all dynamically allocated file paths for the texture images.
+** These are loaded from the map config (e.g., ./textures/wall_N.xpm).
 */
 void	free_texture_data(t_map *map)
 {
@@ -51,46 +47,41 @@ void	free_texture_data(t_map *map)
 	while (i < 4)
 	{
 		if (map->img[i].path)
-		{
 			free(map->img[i].path);
-			map->img[i].path = NULL;
-		}
 		i++;
 	}
 }
 
 /*
-** Frees a null-terminated array of strings and the array itself.
+** Frees an array of strings (e.g., the map array).
+** Each line is freed individually, then the array itself is freed.
 */
-void	free_string_array(char **array)
+void	free_str_array(char **str)
 {
 	int	i;
 
 	i = 0;
-	if (!array)
-		return ;
-	while (array[i])
+	while (str && str[i])
 	{
-		free(array[i]);
+		free(str[i]);
 		i++;
 	}
-	free(array);
+	if (str)
+		free(str);
 }
 
 /*
-** Performs full cleanup of allocated resources and exits the program.
+** Frees all allocated resources and cleanly exits the program.
+** This includes textures, map lines, MLX images, window, and display.
+** Prevents memory leaks and ensures proper shutdown.
 */
 int	exit_game(t_map *map)
 {
 	free_texture_data(map);
-	free_string_array(map->map_tab);
-	destroy_images(map);
-	if (map->mlx_win)
-		mlx_destroy_window(map->mlx, map->mlx_win);
-	if (map->mlx)
-	{
-		mlx_destroy_display(map->mlx);
-		free(map->mlx);
-	}
-	exit(EXIT_SUCCESS);
+	free_str_array(map->map_tab);
+	destroy_img(map);
+	mlx_destroy_window(map->mlx, map->mlx_win);
+	mlx_destroy_display(map->mlx);
+	free(map->mlx);
+	exit (0);
 }

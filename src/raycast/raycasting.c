@@ -1,12 +1,15 @@
 #include "../../cub3d.h"
 
+
 /*
-** Calculates delta distances for raycasting.
-** Delta distance is the distance the ray has to travel to go from one x or y-side to the next.
-** Avoids division by zero by using INT_MAX for zero direction values.
+** Calculates the distance the ray must travel to cross 
+** from one x-side to the next (delta_dist_x),
+** and from one y-side to the next (delta_dist_y).
+** Uses `INT_MAX` to avoid division by 0 when the direction component is 0.
+** This value is used in DDA to incrementally calculate the distance to walls.
 */
-void	calculate_delta(t_map *map)
-{
+void	calc_delta(t_map *map)
+{	
 	if (map->ray_dir_x == 0)
 		map->delta_dist_x = INT_MAX;
 	else
@@ -17,11 +20,15 @@ void	calculate_delta(t_map *map)
 		map->delta_dist_y = fabs(1 / map->ray_dir_y);
 }
 
+
 /*
-** Determines step direction and initial side distances based on ray direction.
-** This is used to prepare for DDA (Digital Differential Analysis) step-by-step checking.
+** Calculates the distance the ray must travel to cross 
+** from one x-side to the next (delta_dist_x),
+** and from one y-side to the next (delta_dist_y).
+** Uses `INT_MAX` to avoid division by 0 when the direction component is 0.
+** This value is used in DDA to incrementally calculate the distance to walls.
 */
-void	calculate_ray_step(t_map *map)
+void	calc_ray_step(t_map *map)
 {
 	if (map->ray_dir_x < 0)
 	{
@@ -46,15 +53,17 @@ void	calculate_ray_step(t_map *map)
 }
 
 /*
-** Performs the Digital Differential Analysis (DDA) to detect wall collisions.
-** Continues stepping through the map grid until a wall cell ('1') is hit.
+** Performs the DDA (Digital Differential Analysis) algorithm.
+** This algorithm steps through the map grid cell by cell,
+** using the precomputed distances until a wall ('1') is hit.
+** Sets `wall_side` to 0 if a vertical wall was hit, or 1 for a horizontal wall.
 */
 void	run_dda(t_map *map)
 {
-	int	hit;
+	int	wall;
 
-	hit = 0;
-	while (!hit)
+	wall = 0;
+	while (wall == 0)
 	{
 		if (map->side_dist_x < map->side_dist_y)
 		{
@@ -69,12 +78,14 @@ void	run_dda(t_map *map)
 			map->wall_side = 1;
 		}
 		if (map->map_tab[map->map_y][map->map_x] == '1')
-			hit = 1;
+			wall = 1;
 	}
 }
 
 /*
-** Initializes ray direction and camera position for a specific screen column.
+** Sets up the raycasting calculations for a single vertical screen slice (column x).
+** Calculates camera space x-coordinate, ray direction,
+** and starting grid cell (map_x, map_y) based on player position.
 */
 void	init_raycast(t_map *map, int x)
 {
@@ -86,10 +97,15 @@ void	init_raycast(t_map *map, int x)
 }
 
 /*
-** Executes the full raycasting loop for each vertical screen column.
-** Calculates ray, steps through map with DDA, and draws textured column.
+** Executes the full raycasting loop over all screen columns.
+** For each column:
+**  - Initializes the ray.
+**  - Computes step and side distances.
+**  - Runs DDA to detect walls.
+**  - Calculates perpendicular wall distance to avoid fish-eye effect.
+**  - Triggers drawing for the current column.
 */
-void	execute_raycasting(t_map *map)
+void	exec_raycasting(t_map *map)
 {
 	int	x;
 
@@ -97,14 +113,14 @@ void	execute_raycasting(t_map *map)
 	while (x < map->display_width)
 	{
 		init_raycast(map, x);
-		calculate_delta(map);
-		calculate_ray_step(map);
+		calc_delta(map);
+		calc_ray_step(map);
 		run_dda(map);
 		if (map->wall_side == 0)
-			map->perpwalldist = map->side_dist_x - map->delta_dist_x;
+			map->perpwalldist = ((map->side_dist_x - map->delta_dist_x));
 		else
-			map->perpwalldist = map->side_dist_y - map->delta_dist_y;
-		draw_column_texture(map, x);
+			map->perpwalldist = ((map->side_dist_y - map->delta_dist_y));
+		draw_col_texture(map, x);
 		x++;
 	}
 }

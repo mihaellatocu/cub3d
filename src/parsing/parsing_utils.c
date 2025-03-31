@@ -1,112 +1,114 @@
 #include "../../cub3d.h"
 
 /*
-** Validates if the map is fully enclosed by walls.
-** Uses validate_map_structure to perform checks.
+** Verifies if the parsed map is correctly enclosed by walls.
+** - Calls `validate_map_walls()` to check both horizontal and vertical boundaries.
+** - Prints a coloured error message if validation fails.
+** - Returns 1 if the map is valid, otherwise 0.
 */
-int	validate_map_walls(t_map *map)
+int	error_map(t_map *map)
 {
-	if (!validate_map_structure(map))
+	if (!validate_map_walls(map))
 	{
-		printf(RED "Error:\nMap is not properly enclosed by walls.\n" RST);
+		ft_printf(RED "Error\nMap not closed\n" RST);
 		return (0);
 	}
 	return (1);
 }
 
 /*
-** Handles parsing-related errors by cleaning up allocated resources
-** and exiting the program with failure.
+** Handles parsing-related errors by cleaning memory and exiting.
+** - Frees the map structure: `map_tab`, `line`, `map_line`, and texture paths.
+** - Displays a custom error message (should include a newline).
+** - Terminates the program with `EXIT_FAILURE`.
 */
-void	handle_parse_error(t_map *map, char *message)
+void	parse_err(t_map *map, char *message)
 {
-	printf(RED "%s" RST, message);
+	ft_printf(message);
 	if (map->map_tab)
-		free_string_array(map->map_tab);
+		free_str_array(map->map_tab);
 	if (map->line)
 		free(map->line);
 	if (map->map_line)
 		free(map->map_line);
 	free_texture_data(map);
-	exit(EXIT_FAILURE);
+	exit (EXIT_FAILURE);
 }
 
 /*
-** Adjusts the map dimensions and ensures all rows are the same width
-** by resizing each line to match the widest one.
+** Computes the map dimensions and ensures all rows are equally wide.
+** - Uses `set_map_dimensions()` to set `map->width_map` and `height_map`.
+** - If multiple or no players are found, dimensions will be zero, triggering an error.
+** - Resizes all lines to match the maximum width (for proper vertical parsing).
+** - Ensures all rows are the same length by appending spaces if needed.
 */
-void	adjust_map_size(t_map *map)
+void	fix_size_map(t_map *map)
 {
 	int	i;
+	int	j;
 
 	i = 0;
-	set_map_dimensions(map, map->map_tab, 0, 0);
+	j = 0;
+	set_map_dimensions(map, map->map_tab, i, j);
 	if (map->height_map == 0 && map->width_map == 0)
-		handle_parse_error(map,
-			"Error:\nMap must contain exactly one player.\n");
+		parse_err(map,RED "Error\nOnly one player is required on the map\n" RST);
 	while (map->map_tab[i])
 	{
-		if (custom_strlen(map->map_tab[i]) <= map->width_map)
+		if (cub3d_strlen(map->map_tab[i]) <= map->width_map)
 		{
 			map->map_tab[i] = resize_line(map->map_tab[i], map->width_map);
 			if (!map->map_tab[i])
-				handle_parse_error(map,
-					"Error:\nMemory allocation failed while resizing map line.\n");
+				parse_err(map,RED "Error\nMalloc error\n" RST);
 		}
 		i++;
 	}
 }
 
 /*
-** Reads and separates the config section and map layout from the input file.
-** Collects map lines into a single joined string for later splitting.
+** Reads and accumulates map lines from a file descriptor.
+** - Uses `get_next_line()` to read one line at a time.
+** - If a line is empty (newline), it's converted to a space to preserve spacing.
+** - `analyze_map_line()` is used to parse and validate config lines (textures/RGB).
+** - Valid map lines are appended with `/` using `strjoin_line()`.
+** - Checks for invalid use of `/` in the map and exits if found.
+** - Splits the resulting `map_line` by `/` into the `map_tab` array.
+** - Calls `fix_size_map()` to normalize line lengths.
 */
 void	read_map_lines(int fd, t_map *map)
 {
-	char	*line;
-	int		in_map;
-
-	in_map = 0;
-	line = get_next_line(fd);
-	while (line)
+	while (42)
 	{
-		if (!in_map)
+		map->line = get_next_line(fd);
+		if (!map->line)
+			break ;
+		if (map->line[0] == '\n')
+			map->line[0] = ' ';
+		if (analyze_map_line(map, map->line) == 1)
 		{
-			if (analyse_map_line(map, line) == 1)
-			{
-				in_map = 1;
-				free(line);
-				line = get_next_line(fd);
-				continue ;
-			}
+			if (ft_strchr(map->line, '/'))
+				parse_err(map,RED "Error\nInvalid character in map\n" RST);
+			map->map_line = strjoin_line(map->map_line, map->line);
 		}
-		else
-		{
-			if (line[0] != '\n')
-				map->map_line = join_lines(map->map_line, line);
-		}
-		free(line);
-		line = get_next_line(fd);
+		free(map->line);
 	}
+	map->map_tab = ft_split(map->map_line, '/');
+	free(map->map_line);
+	map->map_line = NULL;
+	fix_size_map(map);
 }
 
 /*
-** Main map parsing function: reads, processes, and validates the map.
-** Converts raw lines into a 2D array and ensures the map is valid.
+** Entry point for parsing the map file after opening it.
+** - Calls `read_map_lines()` to load and store the map.
+** - Then runs `error_map()` to check wall validity.
+** - If parsing is successful, closes the file and returns 1.
+** - Returns 0 if map validation fails.
 */
 int	parse_map(t_map *map, int fd)
 {
 	read_map_lines(fd, map);
-	if (!map->map_line)
-		handle_parse_error(map, "No map data found after config.");
-	map->map_tab = ft_split(map->map_line, '\n');
-	free(map->map_line);
-	map->map_line = NULL;
-	if (!map->map_tab)
-		handle_parse_error(map, "Failed to split map into a 2D array.");
-	set_map_dimensions(map, map->map_tab, 0, 0);
-	if (!validate_map_walls(map))
-		handle_parse_error(map,
-			"Map is not properly enclosed by walls.");
+	if (!error_map(map))
+		return (0);
+	close(fd);
 	return (1);
 }

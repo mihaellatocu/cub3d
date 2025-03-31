@@ -12,63 +12,67 @@
 
 #include "../../cub3d.h"
 
-
-/**
- * Handles game-related errors, cleans up resources, and exits the program.
- */
-void	handle_game_error(t_map *map, char *message)
+/*
+** Handles fatal game errors by displaying a message and 
+** cleaning up all resources.
+** Frees all textures, map data, destroys window and display,
+** and exits the program with failure status.
+*/
+void	handle_game_err(t_map *map, char *message)
 {
-	printf(RED "\n[ERROR] %s" RST, message);
+	ft_printf(message);
 	free_texture_data(map);
-	free_string_array(map->map_tab);
-	destroy_images(map);
+	free_str_array(map->map_tab);
+	destroy_img(map);
 	if (map->mlx_win)
 		mlx_destroy_window(map->mlx, map->mlx_win);
 	if (map->mlx)
 		mlx_destroy_display(map->mlx);
 	free(map->mlx);
-	exit(EXIT_FAILURE);
+	exit (EXIT_FAILURE);
 }
 
-/**
- * Loads a single texture image from the given path and assigns it to the texture index.
- * Retrieves the image data address for a given texture.
- */
+/*
+** Loads the four wall textures from the provided paths using MiniLibX.
+** Also creates the main render image and obtains direct memory access
+** to each texture and image buffer.
+** If any of these fail, the function calls handle_game_err().
+*/
 void	init_textures(t_map *map)
 {
-	int	 texture_idx;
-	texture_idx = 0;
-	while (texture_idx < 4)
+	int	i;
+
+	i = 0;
+	while (i < 4)
 	{
-		if (!map->img[texture_idx].path)
-			handle_game_error(map, "Missing texture path before loading XPM");
-		printf("Texture[%d] path: %s\n", texture_idx, map->img[texture_idx].path);
-		map->img[texture_idx].image = mlx_xpm_file_to_image(map->mlx,
-				map->img[texture_idx].path, &map->img[texture_idx].width, &map->img[texture_idx].height);
-		if (!map->img[texture_idx].image)
-			handle_game_error(map, "Texture path is invalid or missing");
-		texture_idx++;
+		map->img[i].image = mlx_xpm_file_to_image(map->mlx, map->img[i].path,
+				&map->img[i].width, &map->img[i].height);
+		if (!map->img[i].image)
+			handle_game_err(map,RED "Error\nPath texture is incorrect\n" RST);
+		i++;
 	}
 	map->img[4].image = mlx_new_image(map->mlx,
 			map->display_width, map->display_height);
 	if (!map->img[4].image)
-		handle_game_error(map, "Main image creation failed");
-	texture_idx = 0;
-	while (texture_idx < 5)
+		handle_game_err(map, RED "Error\nImage initialisation has failed\n" RST);
+	i = 0;
+	while (i < 5)
 	{
-		map->img[texture_idx].pixels = mlx_get_data_addr(map->img[texture_idx].image,
-				&map->img[texture_idx].bits_per_pixel, &map->img[texture_idx].line_size,
-				&map->img[texture_idx].endian);
-		if (!map->img[texture_idx].pixels)
-			handle_game_error(map, "Image data address acquisition failed");
-		texture_idx++;
+		map->img[i].pixels = mlx_get_data_addr(map->img[i].image,
+				&map->img[i].bits_per_pixel, &map->img[i].line_size, &map->img[i].endian);
+		if (!map->img[i].pixels)
+			handle_game_err(map,RED "Error\nImage initialisation has failed\n" RST);
+		i++;
 	}
 }
 
-/**
- * Initializes game parameters including player direction and screen dimensions.
- */
-void	init_game_stats(t_map *map)
+/*
+** Sets initial values for player movement speed, screen resolution,
+** and the camera plane vector based on the initial player direction.
+** The camera plane is perpendicular to the direction vector and is
+** used to determine the Field of view in raycasting.
+*/
+void	check_game_init(t_map *map)
 {
 	map->speed = 0.09;
 	map->rot_speed = 0.09;
@@ -79,58 +83,62 @@ void	init_game_stats(t_map *map)
 		map->plane_x = 0.66;
 		map->plane_y = 0;
 	}
-	else if (map->p_dir == 'S')
+	if (map->p_dir == 'S')
 	{
 		map->plane_x = -0.66;
 		map->plane_y = 0;
 	}
-	else if (map->p_dir == 'W')
+	if (map->p_dir == 'W')
 	{
 		map->plane_x = 0;
 		map->plane_y = 0.66;
 	}
-	else if (map->p_dir == 'E')
+	if (map->p_dir == 'E')
 	{
 		map->plane_x = 0;
 		map->plane_y = -0.66;
 	}
 }
 
-/**
- * Creates and sets up the minimap.
- */
+/*
+** Creates the minimap image based on the dimensions of the map.
+** Retrieves memory access to the image and calls the
+** draw_minimap function.
+** If image creation fails, triggers a fatal error.
+*/
 void	init_minimap(t_map *map)
 {
 	map->minimap.image = mlx_new_image(map->mlx,
 			map->width_map * 7, map->height_map * 7);
 	if (!map->minimap.image)
-		handle_game_error(map, "Minimap image creation failed");
+		handle_game_err(map,RED "Error\nMinimap creation has failed\n" RST);
 	map->minimap.pixels = mlx_get_data_addr(map->minimap.image,
-			&map->minimap.bits_per_pixel, &map->minimap.line_size,
-			&map->minimap.endian);
+			&map->minimap.bits_per_pixel, &map->minimap.line_size, &map->minimap.endian);
 	if (!map->minimap.pixels)
-		handle_game_error(map, "Minimap data address acquisition failed");
+		handle_game_err(map,RED "Error\nMinimap creation has failed\n" RST);
 	draw_minimap(map);
 }
 
-/**
- * Starts the game by initializing the window, textures, minimap, and hooks.
- */
+/*
+** Creates the minimap image based on the dimensions of the map.
+** Retrieves memory access to the image and calls the draw_minimap function.
+** If image creation fails, triggers a fatal error.
+*/
 int	start_game(t_map *map)
 {
-	init_game_stats(map);
+	check_game_init(map);
 	map->mlx = mlx_init();
 	if (!map->mlx)
-		handle_game_error(map, "Display initialization failed");
+		handle_game_err(map,RED "Error\nInitialisation of display has failed\n" RST);
 	map->mlx_win = mlx_new_window(map->mlx, map->display_width,
 			map->display_height, "Cub3D");
 	if (!map->mlx_win)
-		handle_game_error(map, "Window creation failed");
+		handle_game_err(map,RED "Error\nInitialisation of window has failed\n" RST);
 	init_textures(map);
 	init_minimap(map);
 	mlx_loop_hook(map->mlx, &render_frame, map);
 	mlx_hook(map->mlx_win, 2, 1L << 0, handle_key_input, map);
-	mlx_hook(map->mlx_win, 6, 1L << 6, handle_mouse_movement, map);
+	mlx_hook(map->mlx_win, 6, 1L << 6, mouse_movement, map);
 	mlx_hook(map->mlx_win, 17, 1L << 0, exit_game, map);
 	mlx_loop(map->mlx);
 	return (0);

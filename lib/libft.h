@@ -12,12 +12,19 @@
 
 #ifndef LIBFT_H
 # define LIBFT_H
+
+# ifndef BUFFER_SIZE
+#  define BUFFER_SIZE 1024
+# endif
+
 # include <unistd.h>
 # include <stdio.h>
 # include <ctype.h>
 # include <string.h>
 # include <stdlib.h>
 # include <stddef.h>
+# include <fcntl.h>
+# include "ft_printf.h"
 
 typedef struct s_list
 {
@@ -30,11 +37,11 @@ int		ft_isdigit(int n);
 int		ft_isalnum(int c);
 int		ft_isascii(int c);
 int		ft_isprint(int c);
-int		ft_strlen(char *str);
 void	*ft_memset(void *s, int c, size_t n);
 void	ft_bzero(void *s, size_t n);
 void	*ft_memcpy(void *dest, const void *src, size_t n);
 void	*ft_memmove(void *dest, const void *src, size_t n);
+size_t	ft_strlen(const char *str);
 size_t	ft_strlcpy(char *dst, char *src, int dest_size);
 size_t	ft_strlcat(char *dst, const char *src, size_t size);
 
@@ -45,16 +52,16 @@ char	*ft_strrchr(const char *s, int c);
 int		ft_strncmp(const char *s1, const char *s2, size_t n);
 void	*ft_memchr(const void *s, int c, size_t n);
 int		ft_memcmp(const void *s1, const void *s2, size_t n);
-char	*ft_strnstr(char *s1, char *s2, int n);
+char	*ft_strnstr(const char *s1, const char *s2, size_t n);
 int		ft_atoi(char *nptr);
 
 char	*ft_strdup(char *s);
 void	*ft_calloc(size_t count, size_t size);
 
-char	*ft_substr(char *s, int start, int len);
+char	*ft_substr(char const *s, unsigned int start, size_t len);
 char	*ft_strjoin(char *s1, char *s2);
 char	*ft_strtrim(char *s1, char const *set);
-char	**ft_split(char *s, char c);
+char	**ft_split(char const *s, char c);
 char	*ft_itoa(int n);
 char	*ft_strmapi(char const *s, char (*f)(unsigned int, char));
 void	ft_striteri(char *s, void (*f)(unsigned int, char*));
@@ -78,5 +85,19 @@ void	ft_free_char2(char **tofree);
 void	ft_free_char3(char ***tofree);
 
 void	ft_strcpy(char *dst, char *src);
+
+int		ft_printf(const char *format, ...);
+int		ft_putchar_printf(char c, int fd);
+int		ft_putstr_printf(char *s, int fd);
+int		ft_putnbr_printf(int n, int fd);
+void	ft_putnbr_fd(int n, int fd);
+int		ft_format(const char *format, va_list args);
+
+/* GET NEXT LINE */
+
+char		*get_next_line(int fd);
+char		*ft_gnl_strjoin(char *s1, char *s2);
+int			ft_gnl_strlen(char *str);
+char		*ft_gnl_strchr(char *s, int c);
 
 #endif

@@ -13,17 +13,17 @@
 #include "../../cub3d.h"
 
 /*
-** Checks if a given character 'c' exists within the allowed characters string.
-** Returns 1 if found, 0 otherwise.
+** Checks if a given character 'c' exists in the string 'char_ok'.
+** Returns 1 if found (i.e., valid), otherwise 0.
 */
-int	is_allowed_char(char c, char *allowed)
+int	is_allowed_char(char c, char *char_ok)
 {
 	int	i;
 
 	i = 0;
-	while (allowed[i])
+	while (char_ok[i])
 	{
-		if (c == allowed[i])
+		if (c == char_ok[i])
 			return (1);
 		i++;
 	}
@@ -31,10 +31,11 @@ int	is_allowed_char(char c, char *allowed)
 }
 
 /*
-** Returns the length of a string until a newline or null terminator is found.
-** Useful for handling raw map lines that may include '\n'.
+** Custom implementation of strlen.
+** Returns the length of the string, stopping at '\n' or '\0'.
+** Used to trim newlines from the length calculation.
 */
-int	custom_strlen(char *str)
+int	cub3d_strlen(char *str)
 {
 	int	i;
 
@@ -45,9 +46,9 @@ int	custom_strlen(char *str)
 }
 
 /*
-** Resizes a map line to a given width.
-** Truncates if too long or pads with spaces if too short.
-** Always null-terminates the returned string.
+** Resizes a given string to the specified length.
+** Pads the new string with spaces if it's shorter than 'size'.
+** Frees the original string and returns the newly allocated one.
 */
 char	*resize_line(char *str, int size)
 {
@@ -55,10 +56,10 @@ char	*resize_line(char *str, int size)
 	char	*new_str;
 
 	i = 0;
-	new_str = malloc(sizeof(char) * (size + 1));
+	new_str = malloc(sizeof(char) * size + 1);
 	if (!new_str)
 		return (NULL);
-	while (str && str[i] && i < size)
+	while (str && str[i])
 	{
 		new_str[i] = str[i];
 		i++;
@@ -74,46 +75,36 @@ char	*resize_line(char *str, int size)
 	return (new_str);
 }
 
-void	copy_and_append_newline(char *dest, char *s1, char *s2, size_t len1)
+/*
+** Concatenates two strings into a new string, separated by a '/'.
+** Ignores newline characters when calculating size.
+** Frees s1 after concatenation and returns the new string.
+*/
+char	*strjoin_line(char *s1, char *s2)
 {
-	size_t	i;
-	size_t	j;
+	int		size;
+	int		i;
+	char	*tab;
 
 	i = 0;
-	while (i < len1)
+	size = (cub3d_strlen(s1) + cub3d_strlen(s2));
+	tab = malloc(sizeof(char) * size + 2);
+	if (tab == NULL)
+		return (NULL);
+	while (s1 && s1[i])
 	{
-		dest[i] = s1[i];
+		tab[i] = s1[i];
 		i++;
 	}
-	j = 0;
-	while (s2 && s2[j])
+	while (*s2)
 	{
-		dest[i++] = s2[j++];
+		tab[i] = *s2;
+		i++;
+		s2++;
 	}
-	dest[i++] = '\n';
-	dest[i] = '\0';
-}
-
-/*
-** Concatenates two strings with a newline in between.
-** Allocates a new string, frees the first, and returns the result.
-*/
-char	*join_lines(char *s1, char *s2)
-{
-	size_t	len1;
-	size_t	len2;
-	char	*joined;
-
-	len1 = 0;
+	tab[size] = '/';
+	tab[size + 1] = '\0';
 	if (s1)
-		len1 = ft_strlen(s1);
-	len2 = 0;
-	if (s2)
-		len2 = ft_strlen(s2);
-	joined = malloc(len1 + len2 + 2);
-	if (!joined)
-		return (NULL);
-	copy_and_append_newline(joined, s1, s2, len1);
-	free(s1);
-	return (joined);
+		free(s1);
+	return (tab);
 }

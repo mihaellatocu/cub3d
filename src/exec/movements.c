@@ -12,12 +12,15 @@
 
 #include "../../cub3d.h"
 
-/**
- * Moves the player based on direction vector and collision detection.
- * The `sign` parameter decides whether the movement is forward ('+')
- * or backward ('-'). If the move is valid (not into a wall), updates
- * the position and minimap accordingly.
- */
+/*
+** Moves the player on the map in a specified direction.
+** `next_x` and `next_y` define the movement vector (usually derived from dir or plane).
+** `sign` determines whether the movement is forward ('+') or backward ('-').
+**
+** - Before moving, the function checks for walls ('1') to prevent walking through them.
+** - Updates player position only if the next tile is not a wall.
+** - If the player moves to a new tile, the minimap is updated.
+*/
 void	move_player(t_map *map, double next_x, double next_y, char sign)
 {
 	int	old_x;
@@ -43,20 +46,24 @@ void	move_player(t_map *map, double next_x, double next_y, char sign)
 		update_minimap(map, old_x, old_y);
 }
 
-/**
- * Rotates the player's direction and camera plane by the given speed.
- * Uses basic 2D rotation matrix to rotate both the direction vector
- * and the camera plane.
- */
-void	rotate_player(t_map *map, double rotation_speed)
+/*
+** Rotates the player's direction and camera plane using standard 2D rotation.
+** Rotation is done using the rotation matrix:
+**   x' = x * cos(θ) - y * sin(θ)
+**   y' = x * sin(θ) + y * cos(θ)
+**
+** - `rot_spd` defines the rotation angle (positive = right, negative = left).
+** - This affects both the viewing direction and the FOV plane.
+*/
+void	rotate_player(t_map *map, double rot_spd)
 {
 	double	tmp_dir_x;
 	double	tmp_plane_x;
 
 	tmp_dir_x = map->dir_x;
 	tmp_plane_x = map->plane_x;
-	map->dir_x = map->dir_x * cos(rotation_speed) - map->dir_y * sin(rotation_speed);
-	map->dir_y = tmp_dir_x * sin(rotation_speed) + map->dir_y * cos(rotation_speed);
-	map->plane_x = map->plane_x * cos(rotation_speed) - map->plane_y * sin(rotation_speed);
-	map->plane_y = tmp_plane_x * sin(rotation_speed) + map->plane_y * cos(rotation_speed);
+	map->dir_x = map->dir_x * cos(rot_spd) - map->dir_y * sin(rot_spd);
+	map->dir_y = tmp_dir_x * sin(rot_spd) + map->dir_y * cos(rot_spd);
+	map->plane_x = map->plane_x * cos(rot_spd) - map->plane_y * sin(rot_spd);
+	map->plane_y = tmp_plane_x * sin(rot_spd) + map->plane_y * cos(rot_spd);
 }
