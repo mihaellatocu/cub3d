@@ -6,7 +6,7 @@
 /*   By: mtocu <mtocu@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/27 16:00:00 by mtocu             #+#    #+#             */
-/*   Updated: 2025/03/27 16:00:00 by mtocu            ###   ########.fr       */
+/*   Updated: 2025/04/01 18:23:23 by mtocu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,10 @@
 /*
 ** Handles keyboard input for player movement and rotation.
 ** - KEY_W / KEY_S: move forward/backward in the direction the player is facing.
-** - KEY_A / KEY_D: strafe left/right based on camera plane (perpendicular to direction).
-** - KEY_L / KEY_R: rotate the player left/right, with direction depending on initial orientation.
+** - KEY_A / KEY_D: strafe left/right based on camera plane (perpendicular 
+to direction).
+** - KEY_L / KEY_R: rotate the player left/right, with direction depending 
+on initial orientation.
 ** - KEY_ESC: cleanly exits the game.
 */
 int	handle_key_input(int keycode, t_map *map)
@@ -28,9 +30,11 @@ int	handle_key_input(int keycode, t_map *map)
 	else if (keycode == KEY_S)
 		move_player(map, map->dir_x * map->speed, map->dir_y * map->speed, '-');
 	else if (keycode == KEY_A)
-		move_player(map, map->plane_x * map->speed, map->plane_y * map->speed, '-');
+		move_player(map, map->plane_x * map->speed,
+			map->plane_y * map->speed, '-');
 	else if (keycode == KEY_D)
-		move_player(map, map->plane_x * map->speed, map->plane_y * map->speed, '+');
+		move_player(map, map->plane_x * map->speed,
+			map->plane_y * map->speed, '+');
 	else if ((keycode == KEY_L && (map->p_dir == 'N' || map->p_dir == 'S'))
 		|| (keycode == KEY_R && (map->p_dir == 'E' || map->p_dir == 'W')))
 		rotate_player(map, -map->rot_speed);
