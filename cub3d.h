@@ -147,7 +147,7 @@ int		analyze_map_line(t_map *map, char *line);
 void	assign_texture_path(t_map *map, char **path, char **split_line);
 int		parse_rgb(char *line);
 int		parse_rgb_value(int *rgb, char *line);
-void	parse_rgb_map(t_map *map, int *rgb, char **split_line);
+void	parse_rgb_map(t_map *map, int *rgb, char *line);
 
 /* =============================================================================
 **                             INPUT EVENTS
@@ -214,5 +214,7 @@ void	draw_minimap(t_map *map);
 void	update_minimap(t_map *map, int old_x, int old_y);
 void	minimap_place_pixel(t_map *map, int x, int y, int color);
 void	draw_minimap_tile(t_map *map, int x, int y, int color);
+
+
 
 #endif

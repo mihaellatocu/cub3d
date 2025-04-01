@@ -44,30 +44,36 @@ void	assign_texture_path(t_map *map, char **path, char **split_line)
 ** - Should not contain repeated commas or non-digit/non-comma characters.
 ** - Must contain exactly two commas and be under 12 characters in length.
 */
-int	parse_rgb(char *line)
+int parse_rgb(char *line)
 {
-	int	i;
-	int	comma;
-
-	i = 0;
-	comma = 0;
-	if (!ft_isdigit(line[0]) || !ft_isdigit(line[cub3d_strlen(line) - 1])
-		|| cub3d_strlen(line) > 11)
-		return (0);
-	while (line[i + 1])
-	{
-		if (line[i] == ',')
-			comma++;
-		if (line[i] == ',' && line[i + 1] && line[i + 1] == ',')
-			return (0);
-		else if ((!ft_isdigit(line[i])) && line[i] != ',')
-			return (0);
-		i++;
-	}
-	if (comma != 2)
-		return (0);
-	return (1);
+    int i = 0, comma = 0, prevWasComma = 0, k;
+    while (line[i] && ft_isspace(line[i]))
+        i++;
+    if (!ft_isdigit(line[i]))
+        return (0);
+    while (line[i])
+    {
+        if (ft_isdigit(line[i]))
+            prevWasComma = 0;
+        else if (line[i] == ',')
+        {
+            comma++;
+            if (prevWasComma)
+                return (0);
+            prevWasComma = 1;
+        }
+        else if (!ft_isspace(line[i]))
+            return (0);
+        i++;
+    }
+    k = i - 1;
+    while (k >= 0 && ft_isspace(line[k]))
+        k--;
+    if (k >= 0 && !ft_isdigit(line[k]))
+        return (0);
+    return (comma == 2);
 }
+
 
 /*
 ** Parses and assigns RGB values from a valid string to an int array.
@@ -75,32 +81,48 @@ int	parse_rgb(char *line)
 ** - Verifies that each RGB value is between 0 and 255.
 ** - Returns 1 on success, 0 on invalid format or out-of-bounds values.
 */
-int	parse_rgb_value(int *rgb, char *line)
+int parse_rgb_value(int *rgb, char *line)
 {
-	int	i;
-	int	j;
-
-	j = 1;
-	i = 0;
-	if (!parse_rgb(line))
-		return (0);
-	while (line[i])
-	{
-		if (i == 0)
-			rgb[0] = ft_atoi(line);
-		else if (line[i] == ',')
-			rgb[j++] = ft_atoi(line + i + 1);
-		i++;
-	}
-	i = 0;
-	while (i < 3)
-	{
-		if (rgb[i] < 0 || rgb[i] > 255)
-			return (0);
-		i++;
-	}
-	return (1);
+    int i = 0, j = 0, k;
+    while (j < 3)
+    {
+        while (line[i] && ft_isspace(line[i]))
+            i++;
+        if (!ft_isdigit(line[i]))
+        {
+            ft_printf("Error: expected digit at pos %d\n", i);
+            return (0);
+        }
+        rgb[j] = ft_atoi(&line[i]);
+        while (line[i] && ft_isdigit(line[i]))
+            i++;
+        while (line[i] && ft_isspace(line[i]))
+            i++;
+        if (j < 2 && line[i++] != ',')
+        {
+            ft_printf("Error: expected comma at pos %d\n", i - 1);
+            return (0);
+        }
+        j++;
+    }
+    while (line[i] && ft_isspace(line[i]))
+        i++;
+    if (line[i])
+    {
+        ft_printf("Error: extra characters after RGB values: '%s'\n", &line[i]);
+        return (0);
+    }
+    k = -1;
+    while (++k < 3)
+        if (rgb[k] < 0 || rgb[k] > 255)
+        {
+            ft_printf("Error: RGB value %d out of range\n", rgb[k]);
+            return (0);
+        }
+    ft_printf("Parsed RGB: R: %d, G: %d, B: %d\n", rgb[0], rgb[1], rgb[2]);
+    return (1);
 }
+
 
 /*
 ** Processes and validates RGB input split from a line.
@@ -109,19 +131,18 @@ int	parse_rgb_value(int *rgb, char *line)
 ** - Calls `parse_rgb_value()` to assign RGB values to the map.
 ** - Exits with an error if any check fails.
 */
-void	parse_rgb_map(t_map *map, int *rgb, char **split_line)
+void	parse_rgb_map(t_map *map, int *rgb, char *line)
 {
-	int	i;
+	char	*ptr;
 
-	i = 0;
-	while (split_line[i])
-		i++;
-	if (i == 3 && split_line[2][0] == '\n')
-		free(split_line[i--]);
-	if ((i != 2) || !parse_rgb_value(rgb, split_line[1]))
-	{
-		free_str_array(split_line);
+	// Find the first space after the identifier
+	ptr = ft_strchr(line, ' ');
+	if (!ptr)
 		parse_err(map, "Error\nRGB line is incorrect\n");
-	}
-	free_str_array(split_line);
+	// Skip the space(s) to get to the RGB values
+	while (*ptr && ft_isspace(*ptr))
+		ptr++;
+	// Now, ptr should point to something like "90, 54, 67"
+	if (!parse_rgb_value(rgb, ptr))
+		parse_err(map, "Error\nRGB line is incorrect\n");
 }

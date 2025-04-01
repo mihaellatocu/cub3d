@@ -58,11 +58,13 @@ char	**ft_split(char const *s, char c)
 	int		count;
 	char	**tab;
 
-	i = 0;
+	if (!s)
+		return (NULL);
 	count = ft_count(s, c);
 	tab = ft_calloc(sizeof(char *), count + 1);
 	if (tab == NULL)
 		return (NULL);
+	i = 0;
 	while (*s)
 	{
 		while (*s && *s == c)
