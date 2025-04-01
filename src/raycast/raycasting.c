@@ -117,9 +117,11 @@ void	exec_raycasting(t_map *map)
 		calc_ray_step(map);
 		run_dda(map);
 		if (map->wall_side == 0)
-			map->perpwalldist = ((map->side_dist_x - map->delta_dist_x));
+			map->perpwalldist = (map->side_dist_x - map->delta_dist_x);
 		else
-			map->perpwalldist = ((map->side_dist_y - map->delta_dist_y));
+			map->perpwalldist = (map->side_dist_y - map->delta_dist_y);
+		if (map->perpwalldist < 0.1)
+			map->perpwalldist = 0.1;
 		draw_col_texture(map, x);
 		x++;
 	}
