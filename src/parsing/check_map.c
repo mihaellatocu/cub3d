@@ -129,7 +129,6 @@ int	analyze_map_line(t_map *map, char *line)
 
 	while (i < 6)
 	{
-		ft_printf("Debug: raw line: '%s'\n", line);
 		if (line[0] == ' ' && !line[1])
 			return (0);
 		if (!ft_strncmp(line, "NO ", 3))

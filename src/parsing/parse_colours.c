@@ -119,7 +119,6 @@ int parse_rgb_value(int *rgb, char *line)
             ft_printf("Error: RGB value %d out of range\n", rgb[k]);
             return (0);
         }
-    ft_printf("Parsed RGB: R: %d, G: %d, B: %d\n", rgb[0], rgb[1], rgb[2]);
     return (1);
 }
 
