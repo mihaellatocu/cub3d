@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   img_init.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mtocu <mtocu@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/01 18:36:11 by mtocu             #+#    #+#             */
+/*   Updated: 2025/04/01 18:36:27 by mtocu            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../cub3d.h"
 
 /*
@@ -40,7 +52,8 @@ void	define_column(t_map *map, int *line_height, int *start, int *end)
 ** - wall_x: the exact position the wall was hit (used for texture x-axis).
 ** - tex_x: horizontal position in the texture image.
 ** - Handles texture flipping based on direction of the ray and wall side.
-** - Calculates step: how much to move vertically in the texture per screen pixel.
+** - Calculates step: how much to move vertically in the texture per
+** screen pixel.
 ** - tex_pos: starting position within the texture based on wall height.
 */
 void	define_texture_coords(t_map *map, int start, int line_height)

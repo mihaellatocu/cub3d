@@ -1,5 +1,16 @@
-#include "../../cub3d.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   raycasting.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mtocu <mtocu@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/01 18:39:36 by mtocu             #+#    #+#             */
+/*   Updated: 2025/04/01 18:39:57 by mtocu            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
+#include "../../cub3d.h"
 
 /*
 ** Calculates the distance the ray must travel to cross 
@@ -9,7 +20,7 @@
 ** This value is used in DDA to incrementally calculate the distance to walls.
 */
 void	calc_delta(t_map *map)
-{	
+{
 	if (map->ray_dir_x == 0)
 		map->delta_dist_x = INT_MAX;
 	else
@@ -19,7 +30,6 @@ void	calc_delta(t_map *map)
 	else
 		map->delta_dist_y = fabs(1 / map->ray_dir_y);
 }
-
 
 /*
 ** Calculates the distance the ray must travel to cross 
@@ -83,7 +93,8 @@ void	run_dda(t_map *map)
 }
 
 /*
-** Sets up the raycasting calculations for a single vertical screen slice (column x).
+** Sets up the raycasting calculations for a single vertical screen 
+slice (column x).
 ** Calculates camera space x-coordinate, ray direction,
 ** and starting grid cell (map_x, map_y) based on player position.
 */

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minimap_rendering.c                                :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mtocu <mtocu@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/01 18:36:51 by mtocu             #+#    #+#             */
+/*   Updated: 2025/04/01 18:38:22 by mtocu            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../cub3d.h"
 
 /*
@@ -23,8 +35,8 @@ void	draw_minimap(t_map *map)
 			if (map->map_tab[i][j] == '1')
 				draw_minimap_tile(map, j * 7, i * 7, 0x000000);
 			else if (map->map_tab[i][j] == '0')
-				draw_minimap_tile(map, j * 7, i * 7, compose_color(0, map->rgb_sky[0],
-						map->rgb_sky[1], map->rgb_sky[2]));
+				draw_minimap_tile(map, j * 7, i * 7, \
+compose_color(0, map->rgb_sky[0], map->rgb_sky[1], map->rgb_sky[2]));
 			else if (is_allowed_char(map->map_tab[i][j], "NSEW"))
 				draw_minimap_tile(map, j * 7, i * 7, 0xEEEE20);
 			else
@@ -45,11 +57,11 @@ void	update_minimap(t_map *map, int old_x, int old_y)
 {
 	draw_minimap_tile(map, (int)map->pos_x * 7, (int)map->pos_y * 7, 0xEEEE20);
 	if ((int)map->pos_x != old_x)
-		draw_minimap_tile(map, old_x * 7, old_y * 7,
-			compose_color(0, map->rgb_sky[0], map->rgb_sky[1], map->rgb_sky[2]));
+		draw_minimap_tile(map, old_x * 7, old_y * 7, \
+		compose_color(0, map->rgb_sky[0], map->rgb_sky[1], map->rgb_sky[2]));
 	if ((int)map->pos_y != old_y)
-		draw_minimap_tile(map, old_x * 7, old_y * 7,
-			compose_color(0, map->rgb_sky[0], map->rgb_sky[1], map->rgb_sky[2]));
+		draw_minimap_tile(map, old_x * 7, old_y * 7, \
+		compose_color(0, map->rgb_sky[0], map->rgb_sky[1], map->rgb_sky[2]));
 }
 
 /*

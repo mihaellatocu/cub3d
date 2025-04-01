@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   rendering_core.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mtocu <mtocu@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/01 18:39:17 by mtocu             #+#    #+#             */
+/*   Updated: 2025/04/01 18:39:18 by mtocu            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../cub3d.h"
 
 /*
@@ -12,7 +24,8 @@ int	compose_color(int t, int r, int g, int b)
 
 /*
 ** Draws the background of the game screen.
-** The upper half is filled with the sky color, and the lower half with the floor color.
+** The upper half is filled with the sky color, and the lower half with
+ the floor color.
 ** This is done by looping through every pixel on screen and using `place_pixel`.
 */
 void	render_background(t_map *map)
