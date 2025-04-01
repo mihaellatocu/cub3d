@@ -6,7 +6,7 @@
 /*   By: mtocu <mtocu@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/31 17:23:26 by mtocu             #+#    #+#             */
-/*   Updated: 2025/02/05 13:25:47 by mtocu            ###   ########.fr       */
+/*   Updated: 2025/04/01 19:54:12 by mtocu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,8 +145,9 @@ int		analyze_map_line(t_map *map, char *line);
 */
 
 void	assign_texture_path(t_map *map, char **path, char **split_line);
-int		parse_rgb(char *line);
-int		parse_rgb_value(int *rgb, char *line);
+//int		parse_rgb(char *line, int i, int comma, int prev_comma);
+//int		parse_rgb(char *line);
+int		parse_rgb_value(int *rgb, char *line, int i, int j);
 void	parse_rgb_map(t_map *map, int *rgb, char *line);
 
 /* =============================================================================
