@@ -1,8 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parsing_utils.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mtocu <mtocu@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/01 18:27:37 by mtocu             #+#    #+#             */
+/*   Updated: 2025/04/01 18:29:27 by mtocu            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../cub3d.h"
 
 /*
 ** Verifies if the parsed map is correctly enclosed by walls.
-** - Calls `validate_map_walls()` to check both horizontal and vertical boundaries.
+** - Calls `validate_map_walls()` to check both horizontal and 
+vertical boundaries.
 ** - Prints a coloured error message if validation fails.
 ** - Returns 1 if the map is valid, otherwise 0.
 */
@@ -38,7 +51,8 @@ void	parse_err(t_map *map, char *message)
 /*
 ** Computes the map dimensions and ensures all rows are equally wide.
 ** - Uses `set_map_dimensions()` to set `map->width_map` and `height_map`.
-** - If multiple or no players are found, dimensions will be zero, triggering an error.
+** - If multiple or no players are found, dimensions will be zero, 
+triggering an error.
 ** - Resizes all lines to match the maximum width (for proper vertical parsing).
 ** - Ensures all rows are the same length by appending spaces if needed.
 */
@@ -51,14 +65,14 @@ void	fix_size_map(t_map *map)
 	j = 0;
 	set_map_dimensions(map, map->map_tab, i, j);
 	if (map->height_map == 0 && map->width_map == 0)
-		parse_err(map,RED "Error\nOnly one player is required on the map\n" RST);
+		parse_err(map, RED "Error\nOnly one player is required on map\n" RST);
 	while (map->map_tab[i])
 	{
 		if (cub3d_strlen(map->map_tab[i]) <= map->width_map)
 		{
 			map->map_tab[i] = resize_line(map->map_tab[i], map->width_map);
 			if (!map->map_tab[i])
-				parse_err(map,RED "Error\nMalloc error\n" RST);
+				parse_err(map, RED "Error\nMalloc error\n" RST);
 		}
 		i++;
 	}
@@ -68,7 +82,8 @@ void	fix_size_map(t_map *map)
 ** Reads and accumulates map lines from a file descriptor.
 ** - Uses `get_next_line()` to read one line at a time.
 ** - If a line is empty (newline), it's converted to a space to preserve spacing.
-** - `analyze_map_line()` is used to parse and validate config lines (textures/RGB).
+** - `analyze_map_line()` is used to parse and validate 
+** config lines (textures/RGB).
 ** - Valid map lines are appended with `/` using `strjoin_line()`.
 ** - Checks for invalid use of `/` in the map and exits if found.
 ** - Splits the resulting `map_line` by `/` into the `map_tab` array.
@@ -86,7 +101,7 @@ void	read_map_lines(int fd, t_map *map)
 		if (analyze_map_line(map, map->line) == 1)
 		{
 			if (ft_strchr(map->line, '/'))
-				parse_err(map,RED "Error\nInvalid character in map\n" RST);
+				parse_err(map, RED "Error\nInvalid character in map\n" RST);
 			map->map_line = strjoin_line(map->map_line, map->line);
 		}
 		free(map->line);

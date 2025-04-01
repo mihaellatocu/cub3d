@@ -6,7 +6,7 @@
 /*   By: mtocu <mtocu@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/30 19:29:44 by mtocu             #+#    #+#             */
-/*   Updated: 2025/03/27 17:30:00 by mtocu            ###   ########.fr       */
+/*   Updated: 2025/04/01 18:32:06 by mtocu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,6 @@ void	set_map_dimensions(t_map *map, char **array, int i, int j)
 	map->height_map = i;
 }
 
-
 /*
 ** Validates that all textures and RGB colours 
 ** (floor and ceiling) have been set.
@@ -143,9 +142,8 @@ int	analyze_map_line(t_map *map, char *line)
 			parse_rgb_map(map, map->rgb_floor, line);
 		else if (!ft_strncmp(line, "C ", 2))
 			parse_rgb_map(map, map->rgb_sky, line);
-		
 		else
-			parse_err(map,RED "Error\nIncorrect data on texture/color\n" RST);
+			parse_err(map, RED "Error\nIncorrect data on texture/color\n" RST);
 		i++;
 		return (0);
 	}
