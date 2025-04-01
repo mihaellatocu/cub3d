@@ -6,14 +6,15 @@
 /*   By: mtocu <mtocu@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/04 14:12:47 by mtocu             #+#    #+#             */
-/*   Updated: 2025/02/05 11:33:44 by mtocu            ###   ########.fr       */
+/*   Updated: 2025/04/01 19:02:00 by mtocu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../cub3d.h"
 
 /*
-** Validates the format of a texture path line and stores it in the map structure.
+** Validates the format of a texture path line and stores it in the map 
+structure.
 ** - Expects exactly 2 elements in split_line (e.g., "NO path/to/file").
 ** - Handles an optional newline-only third string caused by splitting.
 ** - Stores the path in *path, trimming trailing newline if necessary.
@@ -44,36 +45,42 @@ void	assign_texture_path(t_map *map, char **path, char **split_line)
 ** - Should not contain repeated commas or non-digit/non-comma characters.
 ** - Must contain exactly two commas and be under 12 characters in length.
 */
-int parse_rgb(char *line)
+int	parse_rgb(char *line)
 {
-    int i = 0, comma = 0, prevWasComma = 0, k;
-    while (line[i] && ft_isspace(line[i]))
-        i++;
-    if (!ft_isdigit(line[i]))
-        return (0);
-    while (line[i])
-    {
-        if (ft_isdigit(line[i]))
-            prevWasComma = 0;
-        else if (line[i] == ',')
-        {
-            comma++;
-            if (prevWasComma)
-                return (0);
-            prevWasComma = 1;
-        }
-        else if (!ft_isspace(line[i]))
-            return (0);
-        i++;
-    }
-    k = i - 1;
-    while (k >= 0 && ft_isspace(line[k]))
-        k--;
-    if (k >= 0 && !ft_isdigit(line[k]))
-        return (0);
-    return (comma == 2);
-}
+	int	i;
+	int	comma;
+	int	prevWasComma;
+	int	k;
 
+	i = 0;
+	comma = 0;
+	prevWasComma = 0;
+	while (line[i] && ft_isspace(line[i]))
+		i++;
+	if (!ft_isdigit(line[i]))
+		return (0);
+	while (line[i])
+	{
+		if (ft_isdigit(line[i]))
+			prevWasComma = 0;
+		else if (line[i] == ',')
+		{
+			comma++;
+			if (prevWasComma)
+				return (0);
+			prevWasComma = 1;
+		}
+		else if (!ft_isspace(line[i]))
+			return (0);
+		i++;
+	}
+	k = i - 1;
+	while (k >= 0 && ft_isspace(line[k]))
+		k--;
+	if (k >= 0 && !ft_isdigit(line[k]))
+		return (0);
+	return (comma == 2);
+}
 
 /*
 ** Parses and assigns RGB values from a valid string to an int array.
@@ -81,47 +88,53 @@ int parse_rgb(char *line)
 ** - Verifies that each RGB value is between 0 and 255.
 ** - Returns 1 on success, 0 on invalid format or out-of-bounds values.
 */
-int parse_rgb_value(int *rgb, char *line)
+int	parse_rgb_value(int *rgb, char *line)
 {
-    int i = 0, j = 0, k;
-    while (j < 3)
-    {
-        while (line[i] && ft_isspace(line[i]))
-            i++;
-        if (!ft_isdigit(line[i]))
-        {
-            ft_printf("Error: expected digit at pos %d\n", i);
-            return (0);
-        }
-        rgb[j] = ft_atoi(&line[i]);
-        while (line[i] && ft_isdigit(line[i]))
-            i++;
-        while (line[i] && ft_isspace(line[i]))
-            i++;
-        if (j < 2 && line[i++] != ',')
-        {
-            ft_printf("Error: expected comma at pos %d\n", i - 1);
-            return (0);
-        }
-        j++;
-    }
-    while (line[i] && ft_isspace(line[i]))
-        i++;
-    if (line[i])
-    {
-        ft_printf("Error: extra characters after RGB values: '%s'\n", &line[i]);
-        return (0);
-    }
-    k = -1;
-    while (++k < 3)
-        if (rgb[k] < 0 || rgb[k] > 255)
-        {
-            ft_printf("Error: RGB value %d out of range\n", rgb[k]);
-            return (0);
-        }
-    return (1);
-}
+	int	i;
+	int	j;
+	int	k;
 
+	i = 0;
+	j = 0;
+	while (j < 3)
+	{
+		while (line[i] && ft_isspace(line[i]))
+			i++;
+		if (!ft_isdigit(line[i]))
+		{
+			ft_printf("Error: expected digit at pos %d\n", i);
+			return (0);
+		}
+		rgb[j] = ft_atoi(&line[i]);
+		while (line[i] && ft_isdigit(line[i]))
+			i++;
+		while (line[i] && ft_isspace(line[i]))
+			i++;
+		if (j < 2 && line[i++] != ',')
+		{
+			ft_printf("Error: expected comma at pos %d\n", i - 1);
+			return (0);
+		}
+		j++;
+	}
+	while (line[i] && ft_isspace(line[i]))
+		i++;
+	if (line[i])
+	{
+		ft_printf("Error: extra characters after RGB values: '%s'\n", &line[i]);
+		return (0);
+	}
+	k = -1;
+	while (++k < 3)
+	{
+		if (rgb[k] < 0 || rgb[k] > 255)
+		{
+			ft_printf("Error: RGB value %d out of range\n", rgb[k]);
+			return (0);
+		}
+	}
+	return (1);
+}
 
 /*
 ** Processes and validates RGB input split from a line.
