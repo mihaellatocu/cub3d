@@ -6,7 +6,7 @@
 /*   By: mtocu <mtocu@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/04 14:45:00 by mtocu             #+#    #+#             */
-/*   Updated: 2025/03/27 17:00:00 by mtocu            ###   ########.fr       */
+/*   Updated: 2025/04/01 18:26:19 by mtocu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,12 @@
 
 /*
 ** Moves the player on the map in a specified direction.
-** `next_x` and `next_y` define the movement vector (usually derived from dir or plane).
+** `next_x` and `next_y` define the movement vector (usually derived from 
+**dir or plane).
 ** `sign` determines whether the movement is forward ('+') or backward ('-').
 **
-** - Before moving, the function checks for walls ('1') to prevent walking through them.
+** - Before moving, the function checks for walls ('1') to prevent walking
+** through them.
 ** - Updates player position only if the next tile is not a wall.
 ** - If the player moves to a new tile, the minimap is updated.
 */
